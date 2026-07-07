@@ -3,7 +3,7 @@ import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity,
   TextInput, Alert,
 } from 'react-native';
-import { Receipt, Plus, Trash2, Download, Send, Check } from 'lucide-react-native';
+import { Receipt, Plus, Trash2, Download, Send, Check, PenTool } from 'lucide-react-native';
 
 type Tab = 'create' | 'invoices' | 'clients';
 
@@ -66,7 +66,7 @@ export default function BillingScreen() {
       return;
     }
     Alert.alert(
-      '📩 Invoice Sent!',
+      'Invoice Sent',
       `Invoice of ₹${total.toLocaleString()} has been sent to ${clientName} via WhatsApp & email with a payment link.`
     );
   };
@@ -185,7 +185,12 @@ export default function BillingScreen() {
                 {signed ? <Check size={16} color="#FFFFFF" /> : <Text style={styles.signBtnText}>Sign</Text>}
               </TouchableOpacity>
             </View>
-            {signed && sigName ? <Text style={styles.cursiveSig}>✒️ {sigName}</Text> : null}
+            {signed && sigName ? (
+              <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'flex-end', marginTop: 10, gap: 6 }}>
+                <PenTool size={14} color="#71717A" />
+                <Text style={[styles.cursiveSig, { marginTop: 0 }]}>{sigName}</Text>
+              </View>
+            ) : null}
           </View>
 
           <View style={styles.actionRow}>

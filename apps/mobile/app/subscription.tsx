@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert,
 } from 'react-native';
-import { Check, Zap, Rocket, Crown, ChevronRight } from 'lucide-react-native';
+import { Check, Zap, Rocket, Crown, ChevronRight, CreditCard } from 'lucide-react-native';
 
 const PLANS = [
   {
@@ -74,7 +74,7 @@ export default function SubscriptionScreen() {
         { text: 'Cancel', style: 'cancel' },
         {
           text: planId === 'enterprise' ? 'Contact Now' : 'Downgrade',
-          onPress: () => Alert.alert('✅ Done!', 'We\'ve received your request.'),
+          onPress: () => Alert.alert('Done!', 'We\'ve received your request.'),
         },
       ]
     );
@@ -168,7 +168,9 @@ export default function SubscriptionScreen() {
         <Text style={s.paySectionLabel}>Payment Method</Text>
         <View style={s.payCard}>
           <View style={s.payLeft}>
-            <Text style={s.payCardIcon}>💳</Text>
+            <View style={s.payIconWrap}>
+              <CreditCard size={20} color="#F97316" />
+            </View>
             <View>
               <Text style={s.payCardName}>Visa ending ···· 4242</Text>
               <Text style={s.payCardExpiry}>Expires 08/27</Text>
@@ -256,7 +258,14 @@ const s = StyleSheet.create({
     borderColor: '#202025', borderWidth: 1, borderRadius: 16, padding: 14,
   },
   payLeft: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
-  payCardIcon: { fontSize: 24 },
+  payIconWrap: {
+    width: 38,
+    height: 38,
+    borderRadius: 10,
+    backgroundColor: '#F9731615',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   payCardName: { fontSize: 14, fontWeight: '700', color: '#FFFFFF' },
   payCardExpiry: { fontSize: 12, color: '#71717A', marginTop: 2 },
   payChangeBtn: { paddingHorizontal: 14, paddingVertical: 8, backgroundColor: '#16161A', borderColor: '#202025', borderWidth: 1, borderRadius: 10 },

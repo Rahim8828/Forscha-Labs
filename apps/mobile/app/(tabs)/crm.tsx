@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Alert, Modal } from 'react-native';
+import { Phone, Check, X, RefreshCw } from 'lucide-react-native';
 
 interface Lead {
   id: string;
@@ -96,11 +97,15 @@ export default function MobileCRM() {
                 <Text style={styles.leadVal}>₹{lead.value.toLocaleString()}</Text>
               </View>
               
-              <Text style={styles.leadMeta}>📞 {lead.phone} • Tag: {lead.source}</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 10 }}>
+                <Phone size={12} color="#8E9196" />
+                <Text style={styles.leadMeta}>{lead.phone} • Tag: {lead.source}</Text>
+              </View>
 
               <View style={styles.actionRow}>
                 <TouchableOpacity style={styles.callBtn} onPress={() => handleCall(lead)}>
-                  <Text style={styles.callBtnText}>📞 Call Client</Text>
+                  <Phone size={12} color="#FFFFFF" style={{ marginRight: 6 }} />
+                  <Text style={styles.callBtnText}>Call Client</Text>
                 </TouchableOpacity>
 
                 {activeColumn === 'INQUIRY' && (
@@ -112,17 +117,20 @@ export default function MobileCRM() {
                 {activeColumn === 'QUOTED' && (
                   <View style={styles.row}>
                     <TouchableOpacity style={styles.wonBtn} onPress={() => handleMoveLead(lead.id, 'WON')}>
-                      <Text style={styles.wonBtnText}>Won 🎉</Text>
+                      <Check size={12} color="#FFFFFF" style={{ marginRight: 4 }} />
+                      <Text style={styles.wonBtnText}>Won</Text>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.lostBtn} onPress={() => handleMoveLead(lead.id, 'LOST')}>
-                      <Text style={styles.lostBtnText}>Lost ❌</Text>
+                      <X size={12} color="#FFFFFF" style={{ marginRight: 4 }} />
+                      <Text style={styles.lostBtnText}>Lost</Text>
                     </TouchableOpacity>
                   </View>
                 )}
 
                 {(activeColumn === 'WON' || activeColumn === 'LOST') && (
                   <TouchableOpacity style={styles.reopenBtn} onPress={() => handleMoveLead(lead.id, 'INQUIRY')}>
-                    <Text style={styles.reopenBtnText}>↺ Re-open Inquiry</Text>
+                    <RefreshCw size={12} color="#FFFFFF" style={{ marginRight: 6 }} />
+                    <Text style={styles.reopenBtnText}>Re-open Inquiry</Text>
                   </TouchableOpacity>
                 )}
               </View>
@@ -263,7 +271,6 @@ const styles = StyleSheet.create({
   leadMeta: {
     fontSize: 12,
     color: '#8E9196',
-    marginBottom: 14,
   },
   actionRow: {
     flexDirection: 'row',
@@ -279,6 +286,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   callBtnText: {
     color: '#FFFFFF',
@@ -308,6 +317,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   wonBtnText: {
     color: '#FFFFFF',
@@ -320,6 +331,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   lostBtnText: {
     color: '#FFFFFF',
@@ -332,6 +345,8 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
     borderRadius: 8,
     alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'center',
   },
   reopenBtnText: {
     color: '#FFFFFF',

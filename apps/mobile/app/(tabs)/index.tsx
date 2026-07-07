@@ -6,8 +6,8 @@ import {
 import { useRouter } from 'expo-router';
 import {
   CreditCard, Star, ShoppingBag, MessageCircle, Receipt, Share2,
-  Bell, User, ChevronRight, LogOut, FileText,
-  HelpCircle, Shield, X,
+  User, ChevronRight, LogOut, FileText,
+  HelpCircle, Shield, X, Sun, Moon, MapPin, Bell
 } from 'lucide-react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -71,7 +71,21 @@ const FEATURES = [
 export default function HomeScreen() {
   const router = useRouter();
   const [profileOpen, setProfileOpen] = useState(false);
+  const [darkMode, setDarkMode] = useState(true);
   const insets = useSafeAreaInsets();
+
+  const theme = {
+    bg: darkMode ? '#070709' : '#F4F4F5',
+    cardBg: darkMode ? '#0F0F12' : '#FFFFFF',
+    text: darkMode ? '#FFFFFF' : '#18181B',
+    subtext: darkMode ? '#71717A' : '#71717A',
+    border: darkMode ? '#202025' : '#E4E4E7',
+    avatarBg: darkMode ? '#16233B' : '#E0E7FF',
+    avatarText: darkMode ? '#FFFFFF' : '#3E6BEC',
+    avatarBorder: darkMode ? '#3E6BEC80' : '#3E6BEC80',
+    brandBadgeBg: darkMode ? '#27272A' : '#E4E4E7',
+    brandBadgeText: darkMode ? '#A1A1AA' : '#71717A',
+  };
 
   const profileMenu = [
     {
@@ -119,41 +133,44 @@ export default function HomeScreen() {
   ];
 
   return (
-    <View style={s.root}>
+    <View style={[s.root, { backgroundColor: theme.bg }]}>
       {/* Spacer for notch */}
       <View style={{ height: Math.max(insets.top, 12) }} />
 
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
 
-        {/* ── TOP BAR (UNIFIED HEADER) ── */}
-        <View style={s.topBar}>
+        {/* ── TOP BAR (UNIFIED HEADER WITH THEME TOGGLE) ── */}
+        <View style={[s.topBar, { borderColor: theme.border }]}>
           {/* Profile Avatar (left) */}
-          <TouchableOpacity style={s.avatar} onPress={() => setProfileOpen(true)} activeOpacity={0.7}>
-            <Text style={s.avatarText}>RS</Text>
+          <TouchableOpacity style={[s.avatar, { backgroundColor: theme.avatarBg, borderColor: theme.avatarBorder }]} onPress={() => setProfileOpen(true)} activeOpacity={0.7}>
+            <Text style={[s.avatarText, { color: theme.avatarText }]}>RS</Text>
             <View style={s.avatarOnline} />
           </TouchableOpacity>
 
           {/* Center brand */}
           <View style={s.topCenter}>
-            <Text style={s.brandName}>FORSCHA</Text>
-            <View style={s.brandBadge}>
-              <Text style={s.brandBadgeText}>OS</Text>
+            <Text style={[s.brandName, { color: theme.text }]}>FORSCHA</Text>
+            <View style={[s.brandBadge, { backgroundColor: theme.brandBadgeBg, borderColor: theme.border }]}>
+              <Text style={[s.brandBadgeText, { color: theme.brandBadgeText }]}>OS</Text>
             </View>
           </View>
 
-          {/* Notification bell (right) */}
-          <TouchableOpacity style={s.bellBtn} activeOpacity={0.7}>
-            <Bell size={18} color="#D4D4D8" />
-            <View style={s.bellBadge} />
+          {/* Theme Mode Toggle (right) */}
+          <TouchableOpacity 
+            style={[s.themeBtn, { backgroundColor: theme.cardBg, borderColor: theme.border }]} 
+            onPress={() => setDarkMode(!darkMode)}
+            activeOpacity={0.7}
+          >
+            {darkMode ? <Sun size={18} color="#F59E0B" /> : <Moon size={18} color="#3E6BEC" />}
           </TouchableOpacity>
         </View>
 
         {/* ── GREETING CARD ── */}
-        <View style={s.welcomeCard}>
+        <View style={[s.welcomeCard, { backgroundColor: theme.cardBg, borderColor: theme.border }]}>
           <View style={s.welcomeHeader}>
             <View>
-              <Text style={s.greetSub}>WELCOME BACK</Text>
-              <Text style={s.greetName}>Rahul Sharma 👋</Text>
+              <Text style={[s.greetSub, { color: theme.subtext }]}>WELCOME BACK</Text>
+              <Text style={[s.greetName, { color: theme.text }]}>Rahul Sharma</Text>
             </View>
             <View style={s.statusBadge}>
               <View style={s.statusDot} />
@@ -161,17 +178,20 @@ export default function HomeScreen() {
             </View>
           </View>
           
-          <View style={s.welcomeDivider} />
+          <View style={[s.welcomeDivider, { backgroundColor: theme.border }]} />
           
           <View style={s.bizRow}>
-            <Text style={s.greetBiz}>Forscha Glass Works</Text>
-            <Text style={s.bizLocation}>📍 Mumbai, IN</Text>
+            <Text style={[s.greetBiz, { color: theme.text }]}>Forscha Glass Works</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+              <MapPin size={12} color={theme.subtext} />
+              <Text style={[s.bizLocation, { color: theme.subtext }]}>Mumbai, IN</Text>
+            </View>
           </View>
         </View>
 
         {/* ── SECTION HEADER ── */}
         <View style={s.sectionRow}>
-          <Text style={s.sectionTitle}>Your Tools</Text>
+          <Text style={[s.sectionTitle, { color: theme.text }]}>Your Tools</Text>
           <View style={s.planBadge}>
             <Text style={s.planText}>Growth Plan</Text>
           </View>
@@ -184,13 +204,13 @@ export default function HomeScreen() {
             return (
               <TouchableOpacity
                 key={f.id}
-                style={[s.featureCard, { borderColor: f.color + '25' }]}
+                style={[s.featureCard, { backgroundColor: theme.cardBg, borderColor: darkMode ? f.color + '25' : f.color + '45' }]}
                 onPress={() => router.push(f.route as any)}
                 activeOpacity={0.72}
               >
                 {/* Arrow indicator */}
                 <View style={s.arrowContainer}>
-                  <ChevronRight size={14} color="#52525B" />
+                  <ChevronRight size={14} color={darkMode ? "#52525B" : "#A1A1AA"} />
                 </View>
 
                 {/* Icon circle */}
@@ -199,8 +219,8 @@ export default function HomeScreen() {
                 </View>
 
                 <View style={{ gap: 4 }}>
-                  <Text style={s.featureLabel}>{f.label}</Text>
-                  <Text style={s.featureDesc}>{f.desc}</Text>
+                  <Text style={[s.featureLabel, { color: theme.text }]}>{f.label}</Text>
+                  <Text style={[s.featureDesc, { color: theme.subtext }]}>{f.desc}</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -208,25 +228,25 @@ export default function HomeScreen() {
         </View>
 
         {/* ── QUICK ACTIONS ── */}
-        <Text style={s.quickLabel}>QUICK ACTIONS</Text>
+        <Text style={[s.quickLabel, { color: theme.subtext }]}>QUICK ACTIONS</Text>
         <View style={s.quickRow}>
-          <TouchableOpacity style={s.quickBtn} onPress={() => router.push('/billing')} activeOpacity={0.7}>
+          <TouchableOpacity style={[s.quickBtn, { backgroundColor: theme.cardBg, borderColor: theme.border }]} onPress={() => router.push('/billing')} activeOpacity={0.7}>
             <View style={[s.quickIconWrap, { backgroundColor: '#F9731615' }]}>
               <Receipt size={16} color="#F97316" />
             </View>
-            <Text style={s.quickBtnText}>New Invoice</Text>
+            <Text style={[s.quickBtnText, { color: theme.text }]}>New Invoice</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.quickBtn} onPress={() => router.push('/google-review')} activeOpacity={0.7}>
+          <TouchableOpacity style={[s.quickBtn, { backgroundColor: theme.cardBg, borderColor: theme.border }]} onPress={() => router.push('/google-review')} activeOpacity={0.7}>
             <View style={[s.quickIconWrap, { backgroundColor: '#F59E0B15' }]}>
               <Star size={16} color="#F59E0B" />
             </View>
-            <Text style={s.quickBtnText}>Get Review</Text>
+            <Text style={[s.quickBtnText, { color: theme.text }]}>Get Review</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.quickBtn} onPress={() => router.push('/whatsapp')} activeOpacity={0.7}>
+          <TouchableOpacity style={[s.quickBtn, { backgroundColor: theme.cardBg, borderColor: theme.border }]} onPress={() => router.push('/whatsapp')} activeOpacity={0.7}>
             <View style={[s.quickIconWrap, { backgroundColor: '#25D36615' }]}>
               <MessageCircle size={16} color="#25D366" />
             </View>
-            <Text style={s.quickBtnText}>Broadcast</Text>
+            <Text style={[s.quickBtnText, { color: theme.text }]}>Broadcast</Text>
           </TouchableOpacity>
         </View>
 
@@ -360,29 +380,13 @@ const s = StyleSheet.create({
     borderColor: '#3F3F46',
   },
   brandBadgeText: { fontSize: 8, fontWeight: '800', color: '#A1A1AA' },
-  bellBtn: {
+  themeBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#0F0F12',
     borderWidth: 1,
-    borderColor: '#202025',
     alignItems: 'center',
     justifyContent: 'center',
-    position: 'relative',
-  },
-  bellBadge: {
-    position: 'absolute',
-    top: 10,
-    right: 11,
-    width: 7,
-    height: 7,
-    borderRadius: 3.5,
-    backgroundColor: '#EF4444',
-    shadowColor: '#EF4444',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.8,
-    shadowRadius: 3,
   },
 
   /* ── GREETING CARD ── */

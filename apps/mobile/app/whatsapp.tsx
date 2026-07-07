@@ -3,7 +3,7 @@ import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity,
   TextInput, Alert, Switch,
 } from 'react-native';
-import { MessageCircle, Zap, Users, Bell, Plus, Trash2, Play, Pause } from 'lucide-react-native';
+import { MessageCircle, Zap, Users, Bell, Plus, Trash2, Play, Pause, Star, ShoppingBag, Calendar, DollarSign, Gift } from 'lucide-react-native';
 
 type Tab = 'templates' | 'campaigns' | 'triggers';
 
@@ -32,21 +32,21 @@ export default function WhatsAppScreen() {
     {
       id: '1',
       name: 'Review Request',
-      message: 'Hi {name}! 👋 Thank you for visiting {business}. We\'d love your feedback! Tap here to leave a quick review: {review_link} ⭐',
+      message: 'Hi {name}! Thank you for visiting {business}. We would love your feedback! Tap here to leave a quick review: {review_link}',
       active: true,
       type: 'review',
     },
     {
       id: '2',
       name: 'Follow-up (3 days)',
-      message: 'Hi {name}, just checking in! Did you enjoy your experience with {business}? Your review means the world to us 🙏',
+      message: 'Hi {name}, just checking in! Did you enjoy your experience with {business}? Your review means the world to us.',
       active: false,
       type: 'followup',
     },
     {
       id: '3',
       name: 'Promo Blast',
-      message: '🎉 Special offer for our valued customers! Get 15% off on your next order. Use code FORSCHA15. Valid till Sunday!',
+      message: 'Special offer for our valued customers! Get 15% off on your next order. Use code FORSCHA15. Valid till Sunday!',
       active: true,
       type: 'promo',
     },
@@ -213,25 +213,30 @@ export default function WhatsAppScreen() {
           <Text style={styles.sectionDesc}>Triggers automatically send WhatsApp messages when specific events happen.</Text>
 
           {[
-            { icon: '⭐', event: 'Customer leaves a review', action: 'Send thank you message', active: true },
-            { icon: '🛍️', event: 'New order placed', action: 'Send order confirmation', active: true },
-            { icon: '📅', event: '3 days after visit', action: 'Send review request', active: false },
-            { icon: '💰', event: 'Invoice sent', action: 'Payment reminder after 7 days', active: true },
-            { icon: '🎂', event: 'Customer birthday', action: 'Send birthday discount', active: false },
-          ].map((trigger, i) => (
-            <View key={i} style={styles.triggerCard}>
-              <Text style={styles.triggerIcon}>{trigger.icon}</Text>
-              <View style={styles.triggerInfo}>
-                <Text style={styles.triggerEvent}>{trigger.event}</Text>
-                <Text style={styles.triggerAction}>→ {trigger.action}</Text>
+            { Icon: Star, color: '#F59E0B', event: 'Customer leaves a review', action: 'Send thank you message', active: true },
+            { Icon: ShoppingBag, color: '#3E6BEC', event: 'New order placed', action: 'Send order confirmation', active: true },
+            { Icon: Calendar, color: '#8B5CF6', event: '3 days after visit', action: 'Send review request', active: false },
+            { Icon: DollarSign, color: '#10B981', event: 'Invoice sent', action: 'Payment reminder after 7 days', active: true },
+            { Icon: Gift, color: '#EC4899', event: 'Customer birthday', action: 'Send birthday discount', active: false },
+          ].map((trigger, i) => {
+            const TriggerIcon = trigger.Icon;
+            return (
+              <View key={i} style={styles.triggerCard}>
+                <View style={[styles.triggerIconWrap, { backgroundColor: trigger.color + '15', borderColor: trigger.color + '30' }]}>
+                  <TriggerIcon size={18} color={trigger.color} />
+                </View>
+                <View style={styles.triggerInfo}>
+                  <Text style={styles.triggerEvent}>{trigger.event}</Text>
+                  <Text style={styles.triggerAction}>→ {trigger.action}</Text>
+                </View>
+                <Switch
+                  trackColor={{ false: '#202025', true: '#25D36650' }}
+                  thumbColor={trigger.active ? '#25D366' : '#52525B'}
+                  value={trigger.active}
+                />
               </View>
-              <Switch
-                trackColor={{ false: '#202025', true: '#25D36650' }}
-                thumbColor={trigger.active ? '#25D366' : '#52525B'}
-                value={trigger.active}
-              />
-            </View>
-          ))}
+            );
+          })}
         </View>
       )}
 
@@ -322,7 +327,14 @@ const styles = StyleSheet.create({
     borderColor: '#202025', borderWidth: 1, borderRadius: 14, padding: 14,
     marginBottom: 10, gap: 12,
   },
-  triggerIcon: { fontSize: 24 },
+  triggerIconWrap: {
+    width: 36,
+    height: 36,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   triggerInfo: { flex: 1 },
   triggerEvent: { fontSize: 13, fontWeight: '700', color: '#FFFFFF', marginBottom: 3 },
   triggerAction: { fontSize: 12, color: '#71717A' },

@@ -2,13 +2,15 @@ import React, { useState } from 'react';
 import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert,
 } from 'react-native';
-import { Share2, Instagram, Link, CheckCircle, Plus, RefreshCw } from 'lucide-react-native';
+import { 
+  Share2, Instagram, Facebook, Linkedin, Youtube, Twitter, Search, 
+  CheckCircle, Plus, Link, Users, BarChart2, Calendar 
+} from 'lucide-react-native';
 
 interface SocialPlatform {
   id: string;
   name: string;
   handle: string;
-  icon: string;
   color: string;
   connected: boolean;
   followers?: string;
@@ -22,7 +24,6 @@ export default function SocialMediaScreen() {
       id: 'instagram',
       name: 'Instagram',
       handle: '@forschalabs',
-      icon: '📸',
       color: '#E1306C',
       connected: true,
       followers: '2.4K',
@@ -33,7 +34,6 @@ export default function SocialMediaScreen() {
       id: 'facebook',
       name: 'Facebook',
       handle: 'Forscha Labs',
-      icon: '👥',
       color: '#1877F2',
       connected: true,
       followers: '1.1K',
@@ -44,7 +44,6 @@ export default function SocialMediaScreen() {
       id: 'linkedin',
       name: 'LinkedIn',
       handle: 'Forscha Labs Pvt Ltd',
-      icon: '💼',
       color: '#0A66C2',
       connected: false,
     },
@@ -52,7 +51,6 @@ export default function SocialMediaScreen() {
       id: 'youtube',
       name: 'YouTube',
       handle: '@forschalabs',
-      icon: '▶️',
       color: '#FF0000',
       connected: false,
     },
@@ -60,7 +58,6 @@ export default function SocialMediaScreen() {
       id: 'twitter',
       name: 'X (Twitter)',
       handle: '@forschalabs',
-      icon: '𝕏',
       color: '#FFFFFF',
       connected: false,
     },
@@ -68,12 +65,11 @@ export default function SocialMediaScreen() {
       id: 'google',
       name: 'Google Business',
       handle: 'Forscha Glass Works',
-      icon: '🔍',
       color: '#4285F4',
       connected: true,
       followers: '128 reviews',
       posts: 0,
-      engagement: '4.8★',
+      engagement: '4.8 rating',
     },
   ]);
 
@@ -84,7 +80,7 @@ export default function SocialMediaScreen() {
     if (!platform) return;
     if (platform.connected) {
       Alert.alert(
-        'Disconnect?',
+        'Disconnect Platform',
         `Are you sure you want to disconnect ${platform.name}?`,
         [
           { text: 'Cancel', style: 'cancel' },
@@ -98,7 +94,7 @@ export default function SocialMediaScreen() {
     } else {
       Alert.alert(
         `Connect ${platform.name}`,
-        `You'll be redirected to ${platform.name} to authorize Forscha to manage your account.`,
+        `You will be redirected to ${platform.name} to authorize Forscha to manage your account.`,
         [
           { text: 'Cancel', style: 'cancel' },
           {
@@ -119,6 +115,25 @@ export default function SocialMediaScreen() {
     { id: 'schedule' as const, label: 'Scheduler' },
     { id: 'analytics' as const, label: 'Analytics' },
   ];
+
+  function getPlatformIcon(id: string, size = 18, color = '#FFFFFF') {
+    switch (id) {
+      case 'instagram':
+        return <Instagram size={size} color={color} />;
+      case 'facebook':
+        return <Facebook size={size} color={color} />;
+      case 'linkedin':
+        return <Linkedin size={size} color={color} />;
+      case 'youtube':
+        return <Youtube size={size} color={color} />;
+      case 'twitter':
+        return <Twitter size={size} color={color} />;
+      case 'google':
+        return <Search size={size} color={color} />;
+      default:
+        return <Share2 size={size} color={color} />;
+    }
+  }
 
   return (
     <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
@@ -156,15 +171,23 @@ export default function SocialMediaScreen() {
             <View key={platform.id} style={[styles.platformCard, platform.connected && { borderColor: platform.color + '40' }]}>
               <View style={styles.platformLeft}>
                 <View style={[styles.platformIcon, { backgroundColor: platform.color + '20', borderColor: platform.color + '40' }]}>
-                  <Text style={styles.platformEmoji}>{platform.icon}</Text>
+                  {getPlatformIcon(platform.id, 20, platform.color)}
                 </View>
-                <View>
+                <View style={{ flex: 1 }}>
                   <Text style={styles.platformName}>{platform.name}</Text>
                   <Text style={styles.platformHandle}>{platform.handle}</Text>
                   {platform.connected && platform.followers && (
                     <View style={styles.statsRow}>
-                      <Text style={styles.statChip}>👥 {platform.followers}</Text>
-                      {platform.engagement && <Text style={styles.statChip}>📊 {platform.engagement}</Text>}
+                      <View style={styles.statChipContainer}>
+                        <Users size={11} color="#A1A1AA" style={{ marginRight: 4 }} />
+                        <Text style={styles.statChip}>{platform.followers}</Text>
+                      </View>
+                      {platform.engagement && (
+                        <View style={styles.statChipContainer}>
+                          <BarChart2 size={11} color="#A1A1AA" style={{ marginRight: 4 }} />
+                          <Text style={styles.statChip}>{platform.engagement}</Text>
+                        </View>
+                      )}
                     </View>
                   )}
                 </View>
@@ -192,7 +215,10 @@ export default function SocialMediaScreen() {
       {activeSection === 'schedule' && (
         <View>
           <View style={styles.infoCard}>
-            <Text style={styles.infoTitle}>📅 Content Scheduler</Text>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 8 }}>
+              <Calendar size={18} color="#EC4899" />
+              <Text style={styles.infoTitle}>Content Scheduler</Text>
+            </View>
             <Text style={styles.infoDesc}>
               Schedule posts across all your connected social platforms from one place. 
               Set date, time, captions, and choose which platforms to publish to.
@@ -200,9 +226,9 @@ export default function SocialMediaScreen() {
           </View>
 
           {[
-            { time: 'Today, 6:00 PM', caption: '🏆 Premium glass installations done right! Check out our latest project in Bandra...', platforms: ['📸', '👥'], status: 'scheduled' },
-            { time: 'Tomorrow, 10:00 AM', caption: '💡 Did you know? Our tempered glass can withstand up to 250°C! Perfect for commercial...', platforms: ['📸', '💼'], status: 'draft' },
-            { time: 'Thu, 8:00 PM', caption: '⭐ Overwhelmed by 5-star reviews this week! Thank you to all our clients in Mumbai...', platforms: ['📸', '👥', '𝕏'], status: 'scheduled' },
+            { time: 'Today, 6:00 PM', caption: 'Premium glass installations done right! Check out our latest project in Bandra...', platforms: ['instagram', 'facebook'], status: 'scheduled' },
+            { time: 'Tomorrow, 10:00 AM', caption: 'Did you know? Our tempered glass can withstand up to 250°C! Perfect for commercial...', platforms: ['instagram', 'linkedin'], status: 'draft' },
+            { time: 'Thu, 8:00 PM', caption: 'Overwhelmed by reviews this week! Thank you to all our clients in Mumbai...', platforms: ['instagram', 'facebook', 'twitter'], status: 'scheduled' },
           ].map((post, i) => (
             <View key={i} style={styles.postCard}>
               <View style={styles.postHeader}>
@@ -214,7 +240,9 @@ export default function SocialMediaScreen() {
               <Text style={styles.postCaption} numberOfLines={2}>{post.caption}</Text>
               <View style={styles.postPlatforms}>
                 {post.platforms.map((p, j) => (
-                  <Text key={j} style={styles.postPlatformIcon}>{p}</Text>
+                  <View key={j} style={{ marginRight: 6 }}>
+                    {getPlatformIcon(p, 14, '#A1A1AA')}
+                  </View>
                 ))}
               </View>
             </View>
@@ -251,7 +279,9 @@ export default function SocialMediaScreen() {
             <Text style={styles.cardTitle}>Platform Breakdown</Text>
             {platforms.filter(p => p.connected).map(p => (
               <View key={p.id} style={styles.breakdownRow}>
-                <Text style={styles.breakdownIcon}>{p.icon}</Text>
+                <View style={{ width: 26, alignItems: 'center' }}>
+                  {getPlatformIcon(p.id, 16, p.color)}
+                </View>
                 <Text style={styles.breakdownName}>{p.name}</Text>
                 <View style={styles.breakdownBarBg}>
                   <View style={[styles.breakdownBarFill, { width: `${Math.random() * 60 + 20}%` as any, backgroundColor: p.color }]} />
@@ -296,10 +326,10 @@ const styles = StyleSheet.create({
     width: 44, height: 44, borderRadius: 12, borderWidth: 1,
     alignItems: 'center', justifyContent: 'center',
   },
-  platformEmoji: { fontSize: 20 },
   platformName: { fontSize: 15, fontWeight: '800', color: '#FFFFFF' },
   platformHandle: { fontSize: 12, color: '#71717A', marginTop: 1 },
   statsRow: { flexDirection: 'row', gap: 8, marginTop: 4 },
+  statChipContainer: { flexDirection: 'row', alignItems: 'center', backgroundColor: '#202025', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
   statChip: { fontSize: 11, color: '#A1A1AA' },
   connectBtn: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
@@ -313,7 +343,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#1A0010', borderColor: '#EC489940', borderWidth: 1,
     borderRadius: 16, padding: 16, marginBottom: 16,
   },
-  infoTitle: { fontSize: 15, fontWeight: '800', color: '#EC4899', marginBottom: 8 },
+  infoTitle: { fontSize: 15, fontWeight: '800', color: '#EC4899' },
   infoDesc: { fontSize: 13, color: '#A1A1AA', lineHeight: 18 },
   postCard: {
     backgroundColor: '#0F0F12', borderColor: '#202025', borderWidth: 1,
@@ -326,8 +356,7 @@ const styles = StyleSheet.create({
   statusDraft: { backgroundColor: '#71717A25' },
   postStatusText: { fontSize: 9, fontWeight: '800', color: '#FFFFFF' },
   postCaption: { fontSize: 13, color: '#D4D4D8', lineHeight: 18, marginBottom: 10 },
-  postPlatforms: { flexDirection: 'row', gap: 8 },
-  postPlatformIcon: { fontSize: 18 },
+  postPlatforms: { flexDirection: 'row', gap: 4 },
   primaryBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
     backgroundColor: '#EC4899', paddingVertical: 14, borderRadius: 12, gap: 8, marginBottom: 12,
@@ -347,7 +376,6 @@ const styles = StyleSheet.create({
   },
   cardTitle: { fontSize: 12, fontWeight: '800', color: '#71717A', textTransform: 'uppercase', marginBottom: 14, letterSpacing: 0.5 },
   breakdownRow: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 12 },
-  breakdownIcon: { fontSize: 18, width: 26 },
   breakdownName: { fontSize: 12, color: '#A1A1AA', width: 70 },
   breakdownBarBg: { flex: 1, height: 6, backgroundColor: '#202025', borderRadius: 3 },
   breakdownBarFill: { height: 6, borderRadius: 3 },

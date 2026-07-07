@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, TextInput, Alert, ActivityIndicator } from 'react-native';
+import { Shield, Sparkles } from 'lucide-react-native';
 
 interface Review {
   id: string;
@@ -71,7 +72,10 @@ export default function MobileReviews() {
 
           {rev.replyText ? (
             <View style={styles.replyBox}>
-              <Text style={styles.replyTitle}>🛡️ Your Live Reply:</Text>
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 4 }}>
+                <Shield size={12} color="#3E6BEC" />
+                <Text style={styles.replyTitle}>Your Live Reply</Text>
+              </View>
               <Text style={styles.replyBody}>{rev.replyText}</Text>
             </View>
           ) : (
@@ -85,7 +89,10 @@ export default function MobileReviews() {
                   {loadingMap[rev.id] ? (
                     <ActivityIndicator size="small" color="#FFFFFF" />
                   ) : (
-                    <Text style={styles.actionBtnText}>✨ Draft Reply with AI</Text>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <Sparkles size={13} color="#FFFFFF" />
+                      <Text style={styles.actionBtnText}>Draft Reply with AI</Text>
+                    </View>
                   )}
                 </TouchableOpacity>
               ) : (
@@ -214,7 +221,6 @@ const styles = StyleSheet.create({
     fontSize: 11,
     fontWeight: '800',
     color: '#3E6BEC',
-    marginBottom: 4,
   },
   replyBody: {
     fontSize: 12,

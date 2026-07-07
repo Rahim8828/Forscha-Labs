@@ -3,7 +3,7 @@ import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity,
   TextInput, Alert, Linking,
 } from 'react-native';
-import { Star, Link, Copy, ExternalLink, RefreshCw, CheckCircle } from 'lucide-react-native';
+import { Star, Link, Copy, ExternalLink, RefreshCw, CheckCircle, Download } from 'lucide-react-native';
 
 type Tab = 'connect' | 'scanner' | 'analytics';
 
@@ -27,7 +27,7 @@ export default function GoogleReviewScreen() {
       return;
     }
     setIsConnected(true);
-    Alert.alert('✅ GMB Connected!', 'Your Google Business Profile is now linked. Review prompts and analytics are active.');
+    Alert.alert('GMB Connected!', 'Your Google Business Profile is now linked. Review prompts and analytics are active.');
     setActiveTab('scanner');
   };
 
@@ -36,7 +36,7 @@ export default function GoogleReviewScreen() {
     setCopied(true);
     setTimeout(() => setCopied(false), 2500);
     Alert.alert(
-      '📋 Review Copied!',
+      'Review Copied!',
       'The review text has been copied. You will now be redirected to Google to paste and submit your 5-star review!',
       [
         {
@@ -174,7 +174,8 @@ export default function GoogleReviewScreen() {
               </View>
             </View>
             <TouchableOpacity style={styles.outlineBtn}>
-              <Text style={styles.outlineBtnText}>📥 Download QR Image</Text>
+              <Download size={14} color="#FFFFFF" style={{ marginRight: 6 }} />
+              <Text style={styles.outlineBtnText}>Download QR Image</Text>
             </TouchableOpacity>
           </View>
 
@@ -217,8 +218,9 @@ export default function GoogleReviewScreen() {
                 ? <CheckCircle size={18} color="#FFFFFF" />
                 : <Copy size={18} color="#FFFFFF" />}
               <Text style={styles.copyBtnText}>
-                {copied ? 'Copied! Opening Google...' : 'Copy & Go to Google ↗'}
+                {copied ? 'Copied! Opening Google...' : 'Copy & Go to Google'}
               </Text>
+              {!copied && <ExternalLink size={14} color="#FFFFFF" style={{ marginLeft: 6 }} />}
             </TouchableOpacity>
             <Text style={styles.previewNote}>★ This is the screen your customers will see</Text>
           </View>
@@ -298,6 +300,7 @@ const styles = StyleSheet.create({
   outlineBtn: {
     backgroundColor: '#16161A', borderColor: '#202025', borderWidth: 1,
     paddingVertical: 12, borderRadius: 12, alignItems: 'center',
+    flexDirection: 'row', justifyContent: 'center',
   },
   outlineBtnText: { color: '#FFFFFF', fontSize: 13, fontWeight: '700' },
   connectedCard: {

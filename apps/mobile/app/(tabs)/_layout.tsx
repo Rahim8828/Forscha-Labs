@@ -54,14 +54,7 @@ export default function TabsLayout() {
           tabBarIcon: ({ color, size }) => <MessageSquare color={color} size={size - 2} />,
         }}
       />
-      <Tabs.Screen
-        name="qr"
-        options={{
-          title: 'QR & NFC Generator',
-          tabBarLabel: 'QR Standee',
-          tabBarIcon: ({ color, size }) => <QrCode color={color} size={size - 2} />,
-        }}
-      />
+
       <Tabs.Screen
         name="catalogue"
         options={{
