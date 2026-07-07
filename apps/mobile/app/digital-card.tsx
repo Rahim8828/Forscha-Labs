@@ -427,7 +427,7 @@ export default function DigitalCardScreen() {
         {renderHeader('Order Standees & Cards', () => router.back())}
 
         {/* Filters */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow} contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}>
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow} contentContainerStyle={{ paddingHorizontal: 14, gap: 6, alignItems: 'center' }}>
           {FILTERS.map(f => (
             <TouchableOpacity
               key={f.id}
@@ -442,7 +442,7 @@ export default function DigitalCardScreen() {
 
         <Text style={styles.countText}>Showing {filteredProducts.length} of {PRODUCTS.length} products</Text>
 
-        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.catalogGrid}>
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={[styles.catalogGrid, { paddingTop: 4 }]}>
           <View style={styles.grid}>
             {filteredProducts.map(product => (
               <TouchableOpacity
@@ -836,59 +836,67 @@ const styles = StyleSheet.create({
   cartBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' },
 
   // Filters
-  filterRow: { paddingVertical: 12 },
+  filterRow: { paddingVertical: 8, paddingBottom: 4 },
   filterChip: {
-    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
+    paddingHorizontal: 10, paddingVertical: 5, borderRadius: 16,
     backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
   },
   filterChipActive: { backgroundColor: '#3E6BEC', borderColor: '#3E6BEC' },
-  filterChipText: { fontSize: 12, fontWeight: '700', color: '#71717A' },
+  filterChipText: { fontSize: 11, fontWeight: '600', color: '#71717A' },
   filterChipTextActive: { color: '#FFFFFF' },
-  countText: { fontSize: 12, color: '#52525B', paddingHorizontal: 16, marginBottom: 8, fontWeight: '500' },
+  countText: { fontSize: 11, color: '#52525B', paddingHorizontal: 16, marginBottom: 6, fontWeight: '500' },
 
   // Catalog Grid
   catalogGrid: { paddingHorizontal: 12 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 10 },
   productCard: {
     width: '47.5%', backgroundColor: '#0F0F12',
-    borderRadius: 16, borderWidth: 1, borderColor: '#202025', overflow: 'hidden',
+    borderRadius: 14, borderWidth: 1, borderColor: '#202025', overflow: 'hidden',
   },
   productImageBox: {
-    height: 130, alignItems: 'center', justifyContent: 'center',
+    height: 140,
+    alignItems: 'center',
+    justifyContent: 'center',
     position: 'relative',
+    paddingTop: 26,
+    paddingHorizontal: 8,
+    paddingBottom: 8,
   },
-  productImage: { width: '90%', height: 110 },
+  productImage: { width: '100%', height: 96, borderRadius: 8 },
   discountBadge: {
-    position: 'absolute', top: 8, left: 8,
-    backgroundColor: '#EF4444', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2,
+    position: 'absolute', top: 6, left: 6,
+    backgroundColor: '#EF4444', borderRadius: 5, paddingHorizontal: 5, paddingVertical: 2,
+    zIndex: 10,
   },
-  discountText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' },
+  discountText: { color: '#FFFFFF', fontSize: 9, fontWeight: '900' },
   nfcBadge: {
-    position: 'absolute', bottom: 8, right: 8,
-    backgroundColor: '#3E6BEC', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3,
-    flexDirection: 'row', alignItems: 'center', gap: 3,
+    position: 'absolute', bottom: 6, right: 6,
+    backgroundColor: '#3E6BEC', borderRadius: 5, paddingHorizontal: 5, paddingVertical: 2,
+    flexDirection: 'row', alignItems: 'center', gap: 2,
+    zIndex: 10,
   },
-  nfcBadgeText: { color: '#FFFFFF', fontSize: 9, fontWeight: '700' },
-  productInfo: { padding: 10 },
-  productName: { fontSize: 11, fontWeight: '700', color: '#FFFFFF', lineHeight: 15, marginBottom: 3 },
-  productBrand: { fontSize: 10, color: '#52525B', fontWeight: '500', marginBottom: 4 },
-  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginBottom: 5 },
-  ratingText: { fontSize: 11, color: '#F59E0B', fontWeight: '700' },
-  reviewCount: { fontSize: 10, color: '#52525B' },
-  priceRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
-  price: { fontSize: 14, fontWeight: '900', color: '#FFFFFF' },
-  originalPrice: { fontSize: 11, color: '#52525B', textDecorationLine: 'line-through' },
+  nfcBadgeText: { color: '#FFFFFF', fontSize: 8, fontWeight: '700' },
+  productInfo: { padding: 8, paddingTop: 6 },
+  productName: { fontSize: 10, fontWeight: '700', color: '#FFFFFF', lineHeight: 14, marginBottom: 2 },
+  productBrand: { fontSize: 9, color: '#52525B', fontWeight: '500', marginBottom: 3 },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginBottom: 4 },
+  ratingText: { fontSize: 10, color: '#F59E0B', fontWeight: '700' },
+  reviewCount: { fontSize: 9, color: '#52525B' },
+  priceRow: { flexDirection: 'row', alignItems: 'center', gap: 5, marginBottom: 7 },
+  price: { fontSize: 13, fontWeight: '900', color: '#FFFFFF' },
+  originalPrice: { fontSize: 10, color: '#52525B', textDecorationLine: 'line-through' },
   buyNowBtn: {
-    backgroundColor: '#3E6BEC', borderRadius: 8, paddingVertical: 7,
+    backgroundColor: '#3E6BEC', borderRadius: 7, paddingVertical: 6,
     alignItems: 'center',
   },
-  buyNowText: { color: '#FFFFFF', fontSize: 11, fontWeight: '800' },
+  buyNowText: { color: '#FFFFFF', fontSize: 10, fontWeight: '800' },
 
   // Detail View
   heroBox: {
-    height: 240, alignItems: 'center', justifyContent: 'center', position: 'relative',
+    height: 260, alignItems: 'center', justifyContent: 'center', position: 'relative',
+    backgroundColor: '#0A0A0C',
   },
-  heroImage: { width: '85%', height: 200 },
+  heroImage: { width: '80%', height: 220, borderRadius: 12 },
   discountBadgeLarge: {
     position: 'absolute', top: 16, left: 16,
     backgroundColor: '#EF4444', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4,
