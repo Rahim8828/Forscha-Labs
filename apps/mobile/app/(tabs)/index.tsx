@@ -227,29 +227,6 @@ export default function HomeScreen() {
           })}
         </View>
 
-        {/* ── QUICK ACTIONS ── */}
-        <Text style={[s.quickLabel, { color: theme.subtext }]}>QUICK ACTIONS</Text>
-        <View style={s.quickRow}>
-          <TouchableOpacity style={[s.quickBtn, { backgroundColor: theme.cardBg, borderColor: theme.border }]} onPress={() => router.push('/billing')} activeOpacity={0.7}>
-            <View style={[s.quickIconWrap, { backgroundColor: '#F9731615' }]}>
-              <Receipt size={16} color="#F97316" />
-            </View>
-            <Text style={[s.quickBtnText, { color: theme.text }]}>New Invoice</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[s.quickBtn, { backgroundColor: theme.cardBg, borderColor: theme.border }]} onPress={() => router.push('/google-review')} activeOpacity={0.7}>
-            <View style={[s.quickIconWrap, { backgroundColor: '#F59E0B15' }]}>
-              <Star size={16} color="#F59E0B" />
-            </View>
-            <Text style={[s.quickBtnText, { color: theme.text }]}>Get Review</Text>
-          </TouchableOpacity>
-          <TouchableOpacity style={[s.quickBtn, { backgroundColor: theme.cardBg, borderColor: theme.border }]} onPress={() => router.push('/whatsapp')} activeOpacity={0.7}>
-            <View style={[s.quickIconWrap, { backgroundColor: '#25D36615' }]}>
-              <MessageCircle size={16} color="#25D366" />
-            </View>
-            <Text style={[s.quickBtnText, { color: theme.text }]}>Broadcast</Text>
-          </TouchableOpacity>
-        </View>
-
         <View style={{ height: 32 }} />
       </ScrollView>
 
@@ -485,29 +462,7 @@ const s = StyleSheet.create({
   featureLabel: { fontSize: 14, fontWeight: '800', color: '#FFFFFF' },
   featureDesc: { fontSize: 11, color: '#71717A', lineHeight: 15 },
 
-  /* ── QUICK ACTIONS ── */
-  quickLabel: { fontSize: 11, fontWeight: '800', color: '#71717A', marginBottom: 12, letterSpacing: 1 },
-  quickRow: { flexDirection: 'row', gap: 8 },
-  quickBtn: {
-    flex: 1,
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: '#0F0F12',
-    borderColor: '#202025',
-    borderWidth: 1,
-    borderRadius: 16,
-    paddingVertical: 14,
-    gap: 8,
-  },
-  quickIconWrap: {
-    width: 32,
-    height: 32,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  quickBtnText: { fontSize: 12, fontWeight: '700', color: '#E4E4E7' },
+
 
   /* ── PROFILE BOTTOM SHEET ── */
   modalOverlay: {

@@ -212,7 +212,7 @@ const s = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#0D1526',
+    backgroundColor: '#101726',
     borderColor: '#1D2D50',
     borderWidth: 1,
     borderRadius: 16,
@@ -224,7 +224,7 @@ const s = StyleSheet.create({
   billingRight: { alignItems: 'flex-end', gap: 6 },
   billingAmt: { fontSize: 20, fontWeight: '900', color: '#3E6BEC' },
   billingActiveDot: {
-    width: 8, height: 8, borderRadius: 4, backgroundColor: '#25D366', alignSelf: 'flex-end',
+    width: 8, height: 8, borderRadius: 4, backgroundColor: '#10B981', alignSelf: 'flex-end',
   },
   planCard: {
     backgroundColor: '#0F0F12',
@@ -234,7 +234,7 @@ const s = StyleSheet.create({
     padding: 18,
     marginBottom: 12,
   },
-  planCardCurrent: { backgroundColor: '#0D1526', borderColor: '#3E6BEC' },
+  planCardCurrent: { backgroundColor: '#3E6BEC12', borderColor: '#3E6BEC' },
   planHeader: { flexDirection: 'row', alignItems: 'flex-start', gap: 12, marginBottom: 14 },
   planIconWrap: { width: 42, height: 42, borderRadius: 12, borderWidth: 1, alignItems: 'center', justifyContent: 'center', flexShrink: 0 },
   planNameRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 4 },

@@ -387,7 +387,7 @@ const styles = StyleSheet.create({
     width: '48%', backgroundColor: '#16161A', borderColor: '#202025', borderWidth: 1,
     borderRadius: 12, padding: 12, alignItems: 'center', position: 'relative',
   },
-  styleCardActive: { borderColor: '#3E6BEC', backgroundColor: '#0D1526' },
+  styleCardActive: { borderColor: '#3E6BEC', backgroundColor: '#3E6BEC12' },
   iconBox: {
     width: 38,
     height: 38,

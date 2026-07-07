@@ -136,8 +136,8 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   statsCard: {
-    backgroundColor: '#151430',
-    borderColor: '#262254',
+    backgroundColor: '#101726',
+    borderColor: '#1D2D50',
     borderWidth: 1,
     padding: 16,
     borderRadius: 16,
@@ -146,11 +146,11 @@ const styles = StyleSheet.create({
   statsHeader: {
     fontSize: 16,
     fontWeight: '800',
-    color: '#818CF8',
+    color: '#60A5FA',
   },
   statsSub: {
     fontSize: 13,
-    color: '#A5B4FC',
+    color: '#93C5FD',
     marginTop: 4,
   },
   sectionTitle: {

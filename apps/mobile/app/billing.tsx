@@ -250,8 +250,8 @@ export default function BillingScreen() {
             </View>
           ))}
           <TouchableOpacity style={styles.addCard}>
-            <Plus size={18} color="#F97316" />
-            <Text style={[styles.addCardText, { color: '#F97316' }]}>Add New Client</Text>
+            <Plus size={18} color="#3E6BEC" />
+            <Text style={[styles.addCardText, { color: '#3E6BEC' }]}>Add New Client</Text>
           </TouchableOpacity>
         </View>
       )}
@@ -277,7 +277,7 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderRadius: 12, padding: 4, marginBottom: 20,
   },
   tab: { flex: 1, paddingVertical: 9, borderRadius: 9, alignItems: 'center' },
-  tabActive: { backgroundColor: '#F97316' },
+  tabActive: { backgroundColor: '#3E6BEC' },
   tabText: { fontSize: 12, fontWeight: '700', color: '#71717A' },
   tabTextActive: { color: '#FFFFFF' },
   card: {
@@ -297,7 +297,7 @@ const styles = StyleSheet.create({
   },
   itemDesc: { fontSize: 14, fontWeight: '700', color: '#FFFFFF' },
   itemMeta: { fontSize: 12, color: '#71717A', marginTop: 2 },
-  itemTotal: { fontSize: 14, fontWeight: '800', color: '#F97316' },
+  itemTotal: { fontSize: 14, fontWeight: '800', color: '#10B981' },
   deleteBtn: { padding: 4 },
   addItemRow: { flexDirection: 'row', gap: 6, marginTop: 12, alignItems: 'center' },
   addItemBtn: { backgroundColor: '#3E6BEC', width: 44, height: 44, borderRadius: 10, alignItems: 'center', justifyContent: 'center' },
@@ -310,7 +310,7 @@ const styles = StyleSheet.create({
   totalVal: { fontSize: 14, color: '#FFFFFF', fontWeight: '700' },
   divider: { height: 1, backgroundColor: '#202025', marginVertical: 8 },
   grandKey: { fontSize: 16, fontWeight: '800', color: '#FFFFFF' },
-  grandVal: { fontSize: 22, fontWeight: '900', color: '#F97316' },
+  grandVal: { fontSize: 22, fontWeight: '900', color: '#10B981' },
   signBtn: {
     backgroundColor: '#3E6BEC', paddingHorizontal: 16, borderRadius: 10,
     alignItems: 'center', justifyContent: 'center', height: 44,
@@ -326,7 +326,7 @@ const styles = StyleSheet.create({
   outlineBtnText: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
   primaryBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#F97316', paddingVertical: 14, borderRadius: 14, gap: 8,
+    backgroundColor: '#3E6BEC', paddingVertical: 14, borderRadius: 14, gap: 8,
   },
   primaryBtnText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
   invoiceCard: {
@@ -340,23 +340,23 @@ const styles = StyleSheet.create({
   invoiceClient: { fontSize: 16, fontWeight: '800', color: '#FFFFFF', marginBottom: 10 },
   invoiceFooter: { flexDirection: 'row', justifyContent: 'space-between' },
   invoiceDate: { fontSize: 12, color: '#71717A' },
-  invoiceAmount: { fontSize: 16, fontWeight: '800', color: '#F97316' },
+  invoiceAmount: { fontSize: 16, fontWeight: '800', color: '#10B981' },
   clientCard: {
     flexDirection: 'row', alignItems: 'center', gap: 14,
     backgroundColor: '#0F0F12', borderColor: '#202025', borderWidth: 1,
     borderRadius: 16, padding: 14, marginBottom: 10,
   },
   clientAvatar: {
-    width: 44, height: 44, borderRadius: 22, backgroundColor: '#1A0E00',
-    borderColor: '#F97316', borderWidth: 1, alignItems: 'center', justifyContent: 'center',
+    width: 44, height: 44, borderRadius: 22, backgroundColor: '#3E6BEC12',
+    borderColor: '#3E6BEC', borderWidth: 1, alignItems: 'center', justifyContent: 'center',
   },
-  clientInitial: { fontSize: 18, fontWeight: '900', color: '#F97316' },
+  clientInitial: { fontSize: 18, fontWeight: '900', color: '#3E6BEC' },
   clientName: { fontSize: 15, fontWeight: '800', color: '#FFFFFF' },
   clientMeta: { fontSize: 12, color: '#71717A', marginTop: 2 },
   clientPhone: { fontSize: 12, color: '#3E6BEC', marginTop: 2 },
   addCard: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#1A0E00', borderColor: '#F9731640', borderWidth: 1,
+    backgroundColor: '#3E6BEC12', borderColor: '#3E6BEC30', borderWidth: 1,
     borderRadius: 16, padding: 16, gap: 8, borderStyle: 'dashed',
   },
   addCardText: { fontSize: 14, fontWeight: '700' },

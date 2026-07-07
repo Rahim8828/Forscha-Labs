@@ -304,7 +304,7 @@ const styles = StyleSheet.create({
   },
   outlineBtnText: { color: '#FFFFFF', fontSize: 13, fontWeight: '700' },
   connectedCard: {
-    backgroundColor: '#0A1A0D', borderColor: '#25D36640', borderWidth: 1,
+    backgroundColor: '#10B98110', borderColor: '#10B98140', borderWidth: 1,
     borderRadius: 18, padding: 20, alignItems: 'center', marginBottom: 16, gap: 8,
   },
   connectedTitle: { fontSize: 16, fontWeight: '800', color: '#10B981' },
@@ -345,7 +345,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row', gap: 10, padding: 12, backgroundColor: '#16161A',
     borderColor: '#202025', borderWidth: 1, borderRadius: 12, marginBottom: 8, alignItems: 'flex-start',
   },
-  reviewOptionActive: { borderColor: '#3E6BEC', backgroundColor: '#0D1526' },
+  reviewOptionActive: { borderColor: '#3E6BEC', backgroundColor: '#3E6BEC12' },
   reviewBullet: { flexShrink: 0, marginTop: 1 },
   emptyBullet: { width: 18, height: 18, borderRadius: 9, borderColor: '#52525B', borderWidth: 2 },
   reviewText: { fontSize: 13, color: '#D4D4D8', lineHeight: 18, flex: 1 },

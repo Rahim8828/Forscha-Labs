@@ -216,7 +216,7 @@ export default function SocialMediaScreen() {
         <View>
           <View style={styles.infoCard}>
             <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: 8, gap: 8 }}>
-              <Calendar size={18} color="#EC4899" />
+              <Calendar size={18} color="#60A5FA" />
               <Text style={styles.infoTitle}>Content Scheduler</Text>
             </View>
             <Text style={styles.infoDesc}>
@@ -307,13 +307,13 @@ const styles = StyleSheet.create({
   statusLeft: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   statusText: { fontSize: 13, fontWeight: '700', color: '#A1A1AA' },
   progressBarBg: { height: 4, backgroundColor: '#202025', borderRadius: 2 },
-  progressBarFill: { height: 4, backgroundColor: '#EC4899', borderRadius: 2 },
+  progressBarFill: { height: 4, backgroundColor: '#3E6BEC', borderRadius: 2 },
   tabBar: {
     flexDirection: 'row', backgroundColor: '#0F0F12', borderColor: '#202025',
     borderWidth: 1, borderRadius: 12, padding: 4, marginBottom: 20,
   },
   tab: { flex: 1, paddingVertical: 9, borderRadius: 9, alignItems: 'center' },
-  tabActive: { backgroundColor: '#EC4899' },
+  tabActive: { backgroundColor: '#3E6BEC' },
   tabText: { fontSize: 12, fontWeight: '700', color: '#71717A' },
   tabTextActive: { color: '#FFFFFF' },
   platformCard: {
@@ -340,11 +340,11 @@ const styles = StyleSheet.create({
   connectBtnText: { fontSize: 12, fontWeight: '700', color: '#71717A' },
   connectBtnTextActive: { color: '#10B981' },
   infoCard: {
-    backgroundColor: '#1A0010', borderColor: '#EC489940', borderWidth: 1,
+    backgroundColor: '#101726', borderColor: '#1D2D50', borderWidth: 1,
     borderRadius: 16, padding: 16, marginBottom: 16,
   },
-  infoTitle: { fontSize: 15, fontWeight: '800', color: '#EC4899' },
-  infoDesc: { fontSize: 13, color: '#A1A1AA', lineHeight: 18 },
+  infoTitle: { fontSize: 15, fontWeight: '800', color: '#60A5FA' },
+  infoDesc: { fontSize: 13, color: '#93C5FD', lineHeight: 18 },
   postCard: {
     backgroundColor: '#0F0F12', borderColor: '#202025', borderWidth: 1,
     borderRadius: 16, padding: 14, marginBottom: 10,
@@ -359,7 +359,7 @@ const styles = StyleSheet.create({
   postPlatforms: { flexDirection: 'row', gap: 4 },
   primaryBtn: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#EC4899', paddingVertical: 14, borderRadius: 12, gap: 8, marginBottom: 12,
+    backgroundColor: '#3E6BEC', paddingVertical: 14, borderRadius: 12, gap: 8, marginBottom: 12,
   },
   primaryBtnText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
   analyticsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12, marginBottom: 16 },

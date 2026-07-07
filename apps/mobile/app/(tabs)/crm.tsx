@@ -220,7 +220,7 @@ const styles = StyleSheet.create({
     borderColor: '#202025',
   },
   activeTabButton: {
-    backgroundColor: '#1F2D44',
+    backgroundColor: '#3E6BEC12',
     borderColor: '#3E6BEC',
   },
   tabLabel: {

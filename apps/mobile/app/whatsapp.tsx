@@ -130,8 +130,8 @@ export default function WhatsAppScreen() {
                   <Text style={[styles.typeBadgeText, { color: TYPE_COLORS[t.type] }]}>{t.type.toUpperCase()}</Text>
                 </View>
                 <Switch
-                  trackColor={{ false: '#202025', true: '#25D36650' }}
-                  thumbColor={t.active ? '#25D366' : '#52525B'}
+                  trackColor={{ false: '#202025', true: '#3E6BEC50' }}
+                  thumbColor={t.active ? '#3E6BEC' : '#52525B'}
                   value={t.active}
                   onValueChange={() => toggleTemplate(t.id)}
                 />
@@ -230,8 +230,8 @@ export default function WhatsAppScreen() {
                   <Text style={styles.triggerAction}>→ {trigger.action}</Text>
                 </View>
                 <Switch
-                  trackColor={{ false: '#202025', true: '#25D36650' }}
-                  thumbColor={trigger.active ? '#25D366' : '#52525B'}
+                  trackColor={{ false: '#202025', true: '#3E6BEC50' }}
+                  thumbColor={trigger.active ? '#3E6BEC' : '#52525B'}
                   value={trigger.active}
                 />
               </View>
@@ -248,29 +248,29 @@ export default function WhatsAppScreen() {
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#070709', padding: 16 },
   linkBanner: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: '#0A1A0D',
-    borderColor: '#25D36640', borderWidth: 1, borderRadius: 16, padding: 14,
+    flexDirection: 'row', alignItems: 'center', backgroundColor: '#10B98110',
+    borderColor: '#10B98140', borderWidth: 1, borderRadius: 16, padding: 14,
     gap: 12, marginBottom: 16,
   },
   linkText: { flex: 1 },
   linkTitle: { fontSize: 14, fontWeight: '800', color: '#FFFFFF' },
   linkDesc: { fontSize: 12, color: '#71717A', marginTop: 2 },
-  linkBtn: { backgroundColor: '#25D366', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10 },
+  linkBtn: { backgroundColor: '#3E6BEC', paddingHorizontal: 16, paddingVertical: 8, borderRadius: 10 },
   linkBtnText: { fontSize: 13, fontWeight: '800', color: '#FFFFFF' },
   linkedBanner: {
-    flexDirection: 'row', alignItems: 'center', backgroundColor: '#0A1A0D',
-    borderColor: '#25D36640', borderWidth: 1, borderRadius: 16, padding: 14,
+    flexDirection: 'row', alignItems: 'center', backgroundColor: '#10B98110',
+    borderColor: '#10B98140', borderWidth: 1, borderRadius: 16, padding: 14,
     gap: 8, marginBottom: 16,
   },
-  activeDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#25D366' },
-  linkedText: { flex: 1, fontSize: 14, fontWeight: '700', color: '#25D366' },
+  activeDot: { width: 8, height: 8, borderRadius: 4, backgroundColor: '#10B981' },
+  linkedText: { flex: 1, fontSize: 14, fontWeight: '700', color: '#10B981' },
   unlinkText: { fontSize: 12, color: '#EF4444', fontWeight: '600' },
   tabBar: {
     flexDirection: 'row', backgroundColor: '#0F0F12', borderColor: '#202025',
     borderWidth: 1, borderRadius: 12, padding: 4, marginBottom: 20,
   },
   tab: { flex: 1, paddingVertical: 9, borderRadius: 9, alignItems: 'center' },
-  tabActive: { backgroundColor: '#25D366' },
+  tabActive: { backgroundColor: '#3E6BEC' },
   tabText: { fontSize: 12, fontWeight: '700', color: '#71717A' },
   tabTextActive: { color: '#FFFFFF' },
   templateCard: {
@@ -286,7 +286,7 @@ const styles = StyleSheet.create({
   variableHint: { fontSize: 11, color: '#52525B', fontFamily: 'monospace' },
   addCard: {
     flexDirection: 'row', alignItems: 'center', justifyContent: 'center',
-    backgroundColor: '#0D1526', borderColor: '#3E6BEC40', borderWidth: 1,
+    backgroundColor: '#3E6BEC12', borderColor: '#3E6BEC30', borderWidth: 1,
     borderRadius: 16, padding: 16, gap: 8, marginBottom: 12, borderStyle: 'dashed',
   },
   addCardText: { fontSize: 14, fontWeight: '700', color: '#3E6BEC' },
@@ -319,7 +319,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 14, paddingVertical: 8, borderRadius: 8,
   },
   actionBtnText: { fontSize: 12, fontWeight: '700', color: '#FFFFFF' },
-  primaryBtn: { backgroundColor: '#25D366', paddingVertical: 14, borderRadius: 12, alignItems: 'center', marginBottom: 12 },
+  primaryBtn: { backgroundColor: '#3E6BEC', paddingVertical: 14, borderRadius: 12, alignItems: 'center', marginBottom: 12 },
   primaryBtnText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
   sectionDesc: { fontSize: 13, color: '#71717A', lineHeight: 18, marginBottom: 16 },
   triggerCard: {
