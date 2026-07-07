@@ -1,543 +1,1072 @@
 import React, { useState } from 'react';
 import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity,
-  TextInput, Alert, ActivityIndicator,
+  TextInput, Alert, FlatList,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { 
-  CreditCard, MapPin, Check, Layers, HardDrive, Shield, Info, ArrowRight, Rss, ChevronLeft
+import {
+  ChevronLeft, ShoppingCart, Star, Check, Plus, Minus, Trash2,
+  Zap, Shield, Package, Wifi, ChevronRight, ChevronDown, ChevronUp,
+  Award, Users, TrendingUp, MapPin, Truck, Clock, Tag,
 } from 'lucide-react-native';
 
-type Step = 'customise' | 'preview' | 'order';
-type ViewMode = 'order' | 'nfc';
+// ─── Types ───────────────────────────────────────────────────────────────────
+interface Plan {
+  id: string;
+  label: string;
+  price: number;
+  originalPrice?: number;
+  badge?: string;
+  features: string[];
+}
 
-const CARD_STYLES = [
-  { id: 'acrylic', label: 'Acrylic Glossy', price: 349, Icon: Layers },
-  { id: 'wooden', label: 'Wooden Base', price: 499, Icon: HardDrive },
-  { id: 'nfc-card', label: 'NFC Tap Card', price: 199, Icon: CreditCard },
-  { id: 'metal', label: 'Metal Standee', price: 699, Icon: Shield },
+interface Product {
+  id: string;
+  name: string;
+  shortName: string;
+  category: 'google' | 'standee' | 'nfc' | 'menu';
+  price: number;
+  originalPrice: number;
+  discount: number;
+  rating: number;
+  reviews: number;
+  brand: string;
+  size: string;
+  material: string;
+  nfcEnabled: boolean;
+  color: string;
+  description: string;
+  features: string[];
+  plans: Plan[];
+  emoji: string;
+  badgeColor: string;
+}
+
+interface CartItem {
+  product: Product;
+  plan: Plan;
+  qty: number;
+}
+
+// ─── Data ─────────────────────────────────────────────────────────────────────
+const PRODUCTS: Product[] = [
+  {
+    id: 'p1',
+    name: '1 QR Google Review AI Standee | White Acrylic | 5mm Thick | NFC-Enabled',
+    shortName: '1QR Google Review AI Standee',
+    category: 'google',
+    price: 1200,
+    originalPrice: 4000,
+    discount: 70,
+    rating: 4.5,
+    reviews: 324,
+    brand: 'SmartyQ',
+    size: '4×6 inch (5mm Thickness)',
+    material: 'Acrylic',
+    nfcEnabled: true,
+    color: 'Gold & White',
+    description: 'Boost your Google reviews instantly! UV-printed acrylic standee with embedded QR + NFC tap access. One-time setup, lifetime results.',
+    features: [
+      'Get 1 Year AI Review Subscription FREE',
+      'UV printed directly on Acrylic – High quality & durable',
+      '5mm thick acrylic for a premium look and durability',
+      'Google Review QR code for easy access',
+      'Google Review Stand with NFC technology',
+      'Contactless NFC tag for seamless user experience',
+    ],
+    plans: [
+      { id: 'pro', label: 'Google Standee + AI Pro Plan', price: 1200, originalPrice: 4000, features: ['1 Year AI Review Subscription', 'QR Code Setup', 'Basic Analytics'] },
+      { id: 'premium', label: 'Google Standee + AI Premium Plan', price: 3200, originalPrice: 6000, badge: 'Most Popular', features: ['2 Year AI Review Subscription', 'QR + NFC Setup', 'Advanced Analytics', 'Priority Support'] },
+      { id: 'enterprise', label: 'Google Standee + AI Enterprise Plan', price: 5200, originalPrice: 8000, badge: 'Best Value', features: ['Lifetime AI Review Subscription', 'Multiple QR + NFC Setup', 'Full Analytics Dashboard', '24/7 Dedicated Support', 'Custom Branding'] },
+    ],
+    emoji: '⭐',
+    badgeColor: '#F59E0B',
+  },
+  {
+    id: 'p2',
+    name: 'Customized 1 QR Standee | Premium Acrylic | NFC-Enabled',
+    shortName: 'Customized 1QR Standee',
+    category: 'standee',
+    price: 1000,
+    originalPrice: 3300,
+    discount: 70,
+    rating: 4.3,
+    reviews: 218,
+    brand: 'SmartyQ',
+    size: '4×6 inch',
+    material: 'Acrylic',
+    nfcEnabled: true,
+    color: 'Custom',
+    description: 'Fully customizable standee with your brand logo and colors. UV-printed with QR + NFC for seamless customer review experience.',
+    features: [
+      'Custom branding with your logo and colors',
+      'UV printed high quality acrylic standee',
+      'QR + NFC enabled for dual-mode access',
+      '1 Year AI Review Subscription included',
+      'Fast delivery within 5-7 working days',
+    ],
+    plans: [
+      { id: 'pro', label: 'Standee + AI Pro Plan', price: 1000, originalPrice: 3300, features: ['1 Year AI Review Subscription', 'Custom Design', 'QR Code Setup'] },
+      { id: 'premium', label: 'Standee + AI Premium Plan', price: 2800, originalPrice: 5000, badge: 'Most Popular', features: ['2 Year AI Review Subscription', 'Premium Custom Design', 'QR + NFC Setup', 'Analytics Dashboard'] },
+    ],
+    emoji: '🎨',
+    badgeColor: '#8B5CF6',
+  },
+  {
+    id: 'p3',
+    name: '2 QR Google Review AI Standee | Double QR Acrylic | NFC-Enabled',
+    shortName: '2QR Google Review AI Standee',
+    category: 'google',
+    price: 1500,
+    originalPrice: 5000,
+    discount: 70,
+    rating: 4.6,
+    reviews: 412,
+    brand: 'SmartyQ',
+    size: '5×7 inch (5mm Thickness)',
+    material: 'Acrylic',
+    nfcEnabled: true,
+    color: 'Gold & White',
+    description: 'Double QR standee with two separate QR codes for different platforms. Collect reviews on Google AND Justdial simultaneously.',
+    features: [
+      '2 QR Codes – Google + any other platform',
+      'NFC enabled for tap-to-review experience',
+      'Get 1 Year AI Review Subscription FREE',
+      '5mm premium thick acrylic',
+      'UV printed for outdoor durability',
+    ],
+    plans: [
+      { id: 'pro', label: 'Double QR + AI Pro Plan', price: 1500, originalPrice: 5000, features: ['1 Year AI Review Subscription', '2 QR Codes', 'Dual Platform Setup'] },
+      { id: 'premium', label: 'Double QR + AI Premium Plan', price: 3800, originalPrice: 7000, badge: 'Most Popular', features: ['2 Year AI Review Subscription', '2 QR + NFC', 'Analytics', 'Priority Support'] },
+      { id: 'enterprise', label: 'Double QR + AI Enterprise Plan', price: 6000, originalPrice: 10000, badge: 'Best Value', features: ['Lifetime Subscription', 'Unlimited QR Codes', 'Full Suite', '24/7 Support'] },
+    ],
+    emoji: '🔲',
+    badgeColor: '#3E6BEC',
+  },
+  {
+    id: 'p4',
+    name: 'Customized 2 QR Standee | Dual QR | Premium Acrylic',
+    shortName: 'Customized 2QR Standee',
+    category: 'standee',
+    price: 1100,
+    originalPrice: 3700,
+    discount: 70,
+    rating: 4.2,
+    reviews: 156,
+    brand: 'SmartyQ',
+    size: '5×7 inch',
+    material: 'Acrylic',
+    nfcEnabled: false,
+    color: 'Custom',
+    description: 'Your brand, your design! Two QR codes on a premium customized acrylic standee. Perfect for restaurants with menu + review QR.',
+    features: [
+      'Dual QR code layout with custom design',
+      'Perfect for Menu QR + Review QR combo',
+      'High-resolution UV print on premium acrylic',
+      'Your logo, colors, and contact info',
+    ],
+    plans: [
+      { id: 'pro', label: 'Custom 2QR + AI Pro Plan', price: 1100, originalPrice: 3700, features: ['1 Year AI Review Subscription', 'Custom Dual QR Design', 'QR Code Setup'] },
+      { id: 'premium', label: 'Custom 2QR + AI Premium Plan', price: 3000, originalPrice: 5500, badge: 'Most Popular', features: ['2 Year AI Review Subscription', 'Premium Custom Design', 'Analytics Dashboard'] },
+    ],
+    emoji: '✏️',
+    badgeColor: '#10B981',
+  },
+  {
+    id: 'p5',
+    name: '3 QR Google Review AI Standee | Triple QR Acrylic | NFC-Enabled',
+    shortName: '3QR Google Review AI Standee',
+    category: 'google',
+    price: 1500,
+    originalPrice: 5000,
+    discount: 70,
+    rating: 4.7,
+    reviews: 289,
+    brand: 'SmartyQ',
+    size: '6×8 inch (5mm Thickness)',
+    material: 'Acrylic',
+    nfcEnabled: true,
+    color: 'Gold & White',
+    description: 'Triple QR standee – collect reviews across three platforms simultaneously. Maximum review generation for serious business owners.',
+    features: [
+      '3 QR Codes for Google, Justdial & Zomato/Swiggy',
+      'NFC enabled for triple platform tap access',
+      'Get 1 Year AI Review Subscription FREE',
+      '5mm thick acrylic standee',
+      'AI-powered smart review prompts',
+    ],
+    plans: [
+      { id: 'pro', label: 'Triple QR + AI Pro Plan', price: 1500, originalPrice: 5000, features: ['1 Year AI Review Subscription', '3 QR Codes', 'Triple Platform Setup'] },
+      { id: 'premium', label: 'Triple QR + AI Premium Plan', price: 4200, originalPrice: 8000, badge: 'Most Popular', features: ['2 Year AI Review Subscription', '3 QR + NFC', 'Full Analytics'] },
+      { id: 'enterprise', label: 'Triple QR + AI Enterprise Plan', price: 6200, originalPrice: 12000, badge: 'Best Value', features: ['Lifetime Subscription', 'All Features', '24/7 Priority Support', 'Custom Branding'] },
+    ],
+    emoji: '🏆',
+    badgeColor: '#F59E0B',
+  },
+  {
+    id: 'p6',
+    name: 'Customized NFC Digital Business Card | Smart NFC Tap Card',
+    shortName: 'Customized NFC Digital Business Card',
+    category: 'nfc',
+    price: 501,
+    originalPrice: 1700,
+    discount: 70,
+    rating: 4.4,
+    reviews: 534,
+    brand: 'SmartyQ',
+    size: 'Standard Card (85×54mm)',
+    material: 'PVC / Metal Available',
+    nfcEnabled: true,
+    color: 'Custom',
+    description: 'Share your complete digital profile with a single tap. No app needed! Works with all NFC-enabled smartphones instantly.',
+    features: [
+      'Tap to share contact, website, social media',
+      'No app required – works on all NFC phones',
+      'Custom design with your branding',
+      'Rewritable NFC – update info anytime',
+      'Works with iOS and Android',
+    ],
+    plans: [
+      { id: 'basic', label: 'NFC Card Basic', price: 501, originalPrice: 1700, features: ['1 NFC Card', 'Custom Design', 'Basic Digital Profile'] },
+      { id: 'pro', label: 'NFC Card Pro', price: 1200, originalPrice: 3000, badge: 'Most Popular', features: ['3 NFC Cards', 'Premium Custom Design', 'Full Digital Profile', 'Analytics'] },
+    ],
+    emoji: '💳',
+    badgeColor: '#3E6BEC',
+  },
+  {
+    id: 'p7',
+    name: 'Social Media Card – Tap to Share | Instagram & LinkedIn NFC Card',
+    shortName: 'Social Media Card – Tap to Share',
+    category: 'nfc',
+    price: 550,
+    originalPrice: 1800,
+    discount: 70,
+    rating: 4.3,
+    reviews: 198,
+    brand: 'SmartyQ',
+    size: 'Standard Card (85×54mm)',
+    material: 'PVC',
+    nfcEnabled: true,
+    color: 'Custom',
+    description: 'Instantly share your Instagram, LinkedIn, Facebook profile with a tap. Perfect for networking events and influencer marketing.',
+    features: [
+      'One tap to open your social media profile',
+      'Supports Instagram, LinkedIn, YouTube, Facebook',
+      'Custom printed with your photo and handle',
+      'Works on all NFC smartphones',
+      'Rewritable – change linked profile anytime',
+    ],
+    plans: [
+      { id: 'basic', label: 'Social NFC Card Basic', price: 550, originalPrice: 1800, features: ['1 Card', 'Custom Print', '1 Social Profile Link'] },
+      { id: 'pro', label: 'Social NFC Card Pro', price: 1400, originalPrice: 3500, badge: 'Most Popular', features: ['5 Cards', 'Premium Print', 'Multiple Profile Links', 'Analytics Dashboard'] },
+    ],
+    emoji: '📱',
+    badgeColor: '#EC4899',
+  },
+  {
+    id: 'p8',
+    name: 'Smart Digital Menu Card | NFC & QR Menu for Restaurants',
+    shortName: 'Smart Digital Menu Card (NFC & QR)',
+    category: 'menu',
+    price: 1000,
+    originalPrice: 3300,
+    discount: 70,
+    rating: 4.5,
+    reviews: 176,
+    brand: 'SmartyQ',
+    size: 'A5 / Custom',
+    material: 'Acrylic / PVC',
+    nfcEnabled: true,
+    color: 'Custom',
+    description: 'Replace paper menus with a smart digital menu. Customers scan QR or tap NFC to view your full menu instantly. Update items without reprinting.',
+    features: [
+      'QR + NFC dual access to your digital menu',
+      'Update menu items anytime from your phone',
+      'No printing costs – save money long term',
+      'Supports images, descriptions, prices',
+      'Works at any restaurant, café, hotel',
+    ],
+    plans: [
+      { id: 'basic', label: 'Smart Menu Basic', price: 1000, originalPrice: 3300, features: ['1 Menu Card', 'Digital Menu Setup', 'QR + NFC Access', '1 Year Updates'] },
+      { id: 'pro', label: 'Smart Menu Pro', price: 2500, originalPrice: 5000, badge: 'Most Popular', features: ['5 Menu Cards', 'Custom Design', 'QR + NFC', 'Lifetime Updates', 'Analytics'] },
+    ],
+    emoji: '🍽️',
+    badgeColor: '#F97316',
+  },
 ];
 
-const COLOR_OPTIONS = [
-  { id: 'blue', color: '#3E6BEC', label: 'Ocean Blue' },
-  { id: 'black', color: '#18181B', label: 'Midnight' },
-  { id: 'white', color: '#F4F4F5', label: 'Frost White' },
-  { id: 'gold', color: '#D97706', label: 'Golden' },
+const FILTERS = [
+  { id: 'all', label: 'All Products' },
+  { id: 'google', label: 'Google Review' },
+  { id: 'standee', label: 'Standees' },
+  { id: 'nfc', label: 'Digital Cards' },
+  { id: 'menu', label: 'Menu Cards' },
 ];
 
+const HOW_IT_WORKS = [
+  { step: '1', title: 'Place Your Order', desc: 'Select your preferred design and complete your order', icon: Package },
+  { step: '2', title: 'Scan the QR Code', desc: 'Use your smartphone to scan the QR code provided', icon: Zap },
+  { step: '3', title: 'Enter Your Business Details', desc: 'Add your business information and save the details', icon: MapPin },
+  { step: '4', title: 'Add Keywords for AI', desc: 'Provide keywords for the AI to generate intelligent suggestions', icon: Award },
+  { step: '5', title: 'Place it on Your Counter', desc: 'Position your standee on your business counter for customers to scan', icon: Shield },
+  { step: '6', title: 'Our Team Will Connect', desc: 'Our support team will reach out to assist you as ordered', icon: Users },
+];
+
+const BENEFITS = [
+  { title: 'Boost Your Reputation', desc: 'Get more positive Google reviews and build trust with customers', icon: TrendingUp, color: '#10B981' },
+  { title: 'Increase Customer Engagement', desc: 'Easy QR code scanning leads to higher review rates', icon: Users, color: '#3E6BEC' },
+  { title: 'Build Customer Loyalty', desc: 'Show customers you value their feedback and opinions', icon: Award, color: '#F59E0B' },
+  { title: 'Improve Local SEO', desc: 'More reviews help your business rank higher in local searches', icon: TrendingUp, color: '#8B5CF6' },
+];
+
+// ─── Main Component ────────────────────────────────────────────────────────────
 export default function DigitalCardScreen() {
   const router = useRouter();
   const insets = useSafeAreaInsets();
-  const [mode, setMode] = useState<ViewMode>('order');
-  const [step, setStep] = useState<Step>('customise');
-  const [businessName, setBusinessName] = useState('Forscha Glass Works');
-  const [tagline, setTagline] = useState('Premium Glass Solutions');
-  const [address, setAddress] = useState('Andheri, Mumbai');
-  const [selectedStyle, setSelectedStyle] = useState('acrylic');
-  const [selectedColor, setSelectedColor] = useState('blue');
-  const [qty, setQty] = useState('1');
-  const [orderPlaced, setOrderPlaced] = useState(false);
 
-  // NFC Programming State
-  const [slug, setSlug] = useState('forschalabs-mumbai');
-  const [programming, setProgramming] = useState(false);
-  const [progProgress, setProgProgress] = useState(0);
+  type ScreenView = 'catalog' | 'detail' | 'cart';
+  const [view, setView] = useState<ScreenView>('catalog');
+  const [activeFilter, setActiveFilter] = useState('all');
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [selectedPlanId, setSelectedPlanId] = useState('pro');
+  const [qty, setQty] = useState(1);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
+  const [showBenefits, setShowBenefits] = useState(false);
+  const [shippingAddress, setShippingAddress] = useState('');
 
-  const selectedCard = CARD_STYLES.find(c => c.id === selectedStyle)!;
-  const selectedTheme = COLOR_OPTIONS.find(c => c.id === selectedColor)!;
-  const total = selectedCard.price * (parseInt(qty) || 1);
+  const filteredProducts = activeFilter === 'all'
+    ? PRODUCTS
+    : PRODUCTS.filter(p => p.category === activeFilter);
 
-  const handleOrder = () => {
-    setOrderPlaced(true);
-    Alert.alert(
-      'Order Confirmed',
-      `Your ${selectedCard.label} review card for "${businessName}" has been placed! We will process and ship within 2-3 business days.`,
-    );
-    setStep('customise');
-    setOrderPlaced(false);
+  const cartTotal = cart.reduce((s, i) => s + i.plan.price * i.qty, 0);
+  const cartCount = cart.reduce((s, i) => s + i.qty, 0);
+
+  const openProduct = (p: Product) => {
+    setSelectedProduct(p);
+    setSelectedPlanId(p.plans[0].id);
+    setQty(1);
+    setView('detail');
   };
 
-  const handleWriteNFC = () => {
-    setProgramming(true);
-    setProgProgress(10);
-    
-    const interval = setInterval(() => {
-      setProgProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          setProgramming(false);
-          Alert.alert('NFC Card Programmed', 'Write success! Touch this card to any customer phone to launch review portal.');
-          return 0;
+  const addToCart = () => {
+    if (!selectedProduct) return;
+    const plan = selectedProduct.plans.find(p => p.id === selectedPlanId)!;
+    setCart(prev => {
+      const existing = prev.find(i => i.product.id === selectedProduct.id && i.plan.id === plan.id);
+      if (existing) {
+        return prev.map(i =>
+          i.product.id === selectedProduct.id && i.plan.id === plan.id
+            ? { ...i, qty: i.qty + qty }
+            : i
+        );
+      }
+      return [...prev, { product: selectedProduct, plan, qty }];
+    });
+    Alert.alert('Added to Cart!', `${selectedProduct.shortName} (${plan.label}) × ${qty} added.`);
+  };
+
+  const removeFromCart = (productId: string, planId: string) => {
+    setCart(prev => prev.filter(i => !(i.product.id === productId && i.plan.id === planId)));
+  };
+
+  const changeCartQty = (productId: string, planId: string, delta: number) => {
+    setCart(prev =>
+      prev.map(i => {
+        if (i.product.id === productId && i.plan.id === planId) {
+          const newQty = Math.max(1, i.qty + delta);
+          return { ...i, qty: newQty };
         }
-        return prev + 30;
-      });
-    }, 400);
+        return i;
+      })
+    );
   };
 
-  return (
-    <View style={{ flex: 1, backgroundColor: '#070709' }}>
-      {/* Spacer for notch */}
-      <View style={{ height: Math.max(insets.top, 12) }} />
+  const placeOrder = () => {
+    if (!shippingAddress.trim()) {
+      Alert.alert('Shipping Address Required', 'Please enter your delivery address to continue.');
+      return;
+    }
+    Alert.alert(
+      'Order Placed!',
+      `Your order of ₹${cartTotal.toLocaleString()} has been confirmed. We'll process and ship within 5-8 business days via DTDC or Amazon Delivery.`,
+      [{ text: 'Great!', onPress: () => { setCart([]); setView('catalog'); setShippingAddress(''); } }]
+    );
+  };
 
-      {/* Premium Header */}
+  // ── Header ──────────────────────────────────────────────────────────────────
+  const renderHeader = (title: string, onBack: () => void) => (
+    <>
+      <View style={{ height: Math.max(insets.top, 12) }} />
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.backBtn} onPress={onBack} activeOpacity={0.7}>
           <ChevronLeft size={20} color="#FFFFFF" />
         </TouchableOpacity>
-        <Text style={styles.headerTitle}>Digital Review Card</Text>
-        <View style={{ width: 40 }} />
+        <Text style={styles.headerTitle}>{title}</Text>
+        {view !== 'cart' ? (
+          <TouchableOpacity style={styles.cartIconBtn} onPress={() => setView('cart')} activeOpacity={0.8}>
+            <ShoppingCart size={18} color="#FFFFFF" />
+            {cartCount > 0 && (
+              <View style={styles.cartBadge}>
+                <Text style={styles.cartBadgeText}>{cartCount}</Text>
+              </View>
+            )}
+          </TouchableOpacity>
+        ) : (
+          <View style={{ width: 40 }} />
+        )}
       </View>
+    </>
+  );
 
-      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+  // ── CATALOG VIEW ─────────────────────────────────────────────────────────────
+  if (view === 'catalog') {
+    return (
+      <View style={styles.screen}>
+        {renderHeader('Order Standees & Cards', () => router.back())}
 
-      {/* Segment Switcher */}
-      <View style={styles.segmentContainer}>
-        <TouchableOpacity 
-          style={[styles.segmentBtn, mode === 'order' && styles.segmentBtnActive]}
-          onPress={() => setMode('order')}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.segmentText, mode === 'order' && styles.segmentTextActive]}>
-            Order Standees
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.segmentBtn, mode === 'nfc' && styles.segmentBtnActive]}
-          onPress={() => setMode('nfc')}
-          activeOpacity={0.7}
-        >
-          <Text style={[styles.segmentText, mode === 'nfc' && styles.segmentTextActive]}>
-            Write NFC Tag
-          </Text>
-        </TouchableOpacity>
-      </View>
+        {/* Filters */}
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow} contentContainerStyle={{ paddingHorizontal: 16, gap: 8 }}>
+          {FILTERS.map(f => (
+            <TouchableOpacity
+              key={f.id}
+              style={[styles.filterChip, activeFilter === f.id && styles.filterChipActive]}
+              onPress={() => setActiveFilter(f.id)}
+              activeOpacity={0.8}
+            >
+              <Text style={[styles.filterChipText, activeFilter === f.id && styles.filterChipTextActive]}>{f.label}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
 
-      {/* ── MODE: ORDER STANDEES ── */}
-      {mode === 'order' && (
-        <View>
-          {/* Step Progress */}
-          <View style={styles.stepRow}>
-            {(['customise', 'preview', 'order'] as Step[]).map((s, i) => (
-              <React.Fragment key={s}>
-                <TouchableOpacity onPress={() => setStep(s)} style={styles.stepItem}>
-                  <View style={[styles.stepCircle, step === s && styles.stepCircleActive]}>
-                    <Text style={[styles.stepNum, step === s && styles.stepNumActive]}>{i + 1}</Text>
+        <Text style={styles.countText}>Showing {filteredProducts.length} of {PRODUCTS.length} products</Text>
+
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.catalogGrid}>
+          <View style={styles.grid}>
+            {filteredProducts.map(product => (
+              <TouchableOpacity
+                key={product.id}
+                style={styles.productCard}
+                onPress={() => openProduct(product)}
+                activeOpacity={0.85}
+              >
+                {/* Product Image Placeholder */}
+                <View style={[styles.productImageBox, { backgroundColor: product.badgeColor + '18' }]}>
+                  <View style={styles.discountBadge}>
+                    <Text style={styles.discountText}>{product.discount}% OFF</Text>
                   </View>
-                  <Text style={[styles.stepLabel, step === s && styles.stepLabelActive]}>
-                    {s.charAt(0).toUpperCase() + s.slice(1)}
-                  </Text>
-                </TouchableOpacity>
-                {i < 2 && <View style={styles.stepLine} />}
-              </React.Fragment>
+                  <Text style={styles.productEmoji}>{product.emoji}</Text>
+                  {product.nfcEnabled && (
+                    <View style={styles.nfcBadge}>
+                      <Wifi size={9} color="#FFFFFF" />
+                      <Text style={styles.nfcBadgeText}>NFC</Text>
+                    </View>
+                  )}
+                </View>
+
+                {/* Product Info */}
+                <View style={styles.productInfo}>
+                  <Text style={styles.productName} numberOfLines={2}>{product.shortName}</Text>
+                  <Text style={styles.productBrand}>{product.brand}</Text>
+
+                  {/* Rating */}
+                  <View style={styles.ratingRow}>
+                    <Star size={11} color="#F59E0B" fill="#F59E0B" />
+                    <Text style={styles.ratingText}>{product.rating}</Text>
+                    <Text style={styles.reviewCount}>({product.reviews})</Text>
+                  </View>
+
+                  {/* Price */}
+                  <View style={styles.priceRow}>
+                    <Text style={styles.price}>₹{product.price.toLocaleString()}</Text>
+                    <Text style={styles.originalPrice}>₹{product.originalPrice.toLocaleString()}</Text>
+                  </View>
+
+                  <TouchableOpacity style={styles.buyNowBtn} onPress={() => openProduct(product)} activeOpacity={0.8}>
+                    <Text style={styles.buyNowText}>Buy Now</Text>
+                  </TouchableOpacity>
+                </View>
+              </TouchableOpacity>
             ))}
           </View>
+          <View style={{ height: 40 }} />
+        </ScrollView>
+      </View>
+    );
+  }
 
-          {/* STEP 1: CUSTOMISE */}
-          {step === 'customise' && (
-            <View>
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>Business Details</Text>
-                <Text style={styles.fieldLabel}>Business Name</Text>
-                <TextInput
-                  style={styles.input}
-                  value={businessName}
-                  onChangeText={setBusinessName}
-                  placeholderTextColor="#52525B"
-                />
-                <Text style={styles.fieldLabel}>Tagline / Slogan</Text>
-                <TextInput
-                  style={styles.input}
-                  value={tagline}
-                  onChangeText={setTagline}
-                  placeholderTextColor="#52525B"
-                />
-                <Text style={styles.fieldLabel}>Location / Area</Text>
-                <TextInput
-                  style={styles.input}
-                  value={address}
-                  onChangeText={setAddress}
-                  placeholderTextColor="#52525B"
-                />
+  // ── DETAIL VIEW ──────────────────────────────────────────────────────────────
+  if (view === 'detail' && selectedProduct) {
+    const activePlan = selectedProduct.plans.find(p => p.id === selectedPlanId) || selectedProduct.plans[0];
+
+    return (
+      <View style={styles.screen}>
+        {renderHeader('Product Details', () => setView('catalog'))}
+
+        <ScrollView showsVerticalScrollIndicator={false}>
+          {/* Product Hero */}
+          <View style={[styles.heroBox, { backgroundColor: selectedProduct.badgeColor + '18' }]}>
+            <Text style={styles.heroEmoji}>{selectedProduct.emoji}</Text>
+            {selectedProduct.nfcEnabled && (
+              <View style={[styles.nfcBadge, { position: 'absolute', top: 16, right: 16 }]}>
+                <Wifi size={10} color="#FFFFFF" />
+                <Text style={styles.nfcBadgeText}>NFC-Enabled</Text>
               </View>
+            )}
+            <View style={styles.discountBadgeLarge}>
+              <Tag size={12} color="#FFFFFF" />
+              <Text style={styles.discountBadgeLargeText}>{selectedProduct.discount}% OFF</Text>
+            </View>
+          </View>
 
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>Card Style</Text>
-                <View style={styles.styleGrid}>
-                  {CARD_STYLES.map(s => {
-                    const StyleIcon = s.Icon;
-                    return (
-                      <TouchableOpacity
-                        key={s.id}
-                        style={[styles.styleCard, selectedStyle === s.id && styles.styleCardActive]}
-                        onPress={() => setSelectedStyle(s.id)}
-                      >
-                        <View style={[styles.iconBox, { backgroundColor: selectedStyle === s.id ? '#3E6BEC20' : '#202025' }]}>
-                          <StyleIcon size={20} color={selectedStyle === s.id ? '#3E6BEC' : '#8E9196'} />
+          <View style={{ padding: 16 }}>
+            {/* Title & Brand */}
+            <Text style={styles.detailBrand}>{selectedProduct.brand}</Text>
+            <Text style={styles.detailName}>{selectedProduct.name}</Text>
+
+            {/* Specs row */}
+            <View style={styles.specsRow}>
+              <View style={styles.specChip}><Text style={styles.specText}>Size: {selectedProduct.size}</Text></View>
+              <View style={styles.specChip}><Text style={styles.specText}>Material: {selectedProduct.material}</Text></View>
+              <View style={styles.specChip}><Text style={styles.specText}>Colour: {selectedProduct.color}</Text></View>
+            </View>
+
+            {/* Rating */}
+            <View style={styles.detailRatingRow}>
+              {[1,2,3,4,5].map(i => (
+                <Star key={i} size={14} color="#F59E0B" fill={i <= Math.floor(selectedProduct.rating) ? "#F59E0B" : "transparent"} />
+              ))}
+              <Text style={styles.detailRatingText}>{selectedProduct.rating} ({selectedProduct.reviews} reviews)</Text>
+            </View>
+
+            {/* Price Banner */}
+            <View style={styles.priceBanner}>
+              <View>
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+                  <Text style={styles.detailPrice}>₹{activePlan.price.toLocaleString()}</Text>
+                  <Text style={styles.detailOriginalPrice}>₹{(activePlan.originalPrice || selectedProduct.originalPrice).toLocaleString()}</Text>
+                  <View style={styles.saveBadge}><Text style={styles.saveText}>{selectedProduct.discount}% OFF</Text></View>
+                </View>
+                <Text style={styles.freeDelivery}>FREE Delivery</Text>
+              </View>
+            </View>
+
+            {/* Plan Selector */}
+            <Text style={styles.sectionHeader}>CHOOSE YOUR PLAN</Text>
+            {selectedProduct.plans.map(plan => (
+              <TouchableOpacity
+                key={plan.id}
+                style={[styles.planCard, selectedPlanId === plan.id && styles.planCardActive]}
+                onPress={() => setSelectedPlanId(plan.id)}
+                activeOpacity={0.8}
+              >
+                <View style={styles.planLeft}>
+                  <View style={[styles.planRadio, selectedPlanId === plan.id && styles.planRadioActive]}>
+                    {selectedPlanId === plan.id && <View style={styles.planRadioDot} />}
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                      <Text style={styles.planLabel}>{plan.label}</Text>
+                      {plan.badge && (
+                        <View style={[styles.planBadge, { backgroundColor: plan.badge === 'Best Value' ? '#10B981' : '#F59E0B' }]}>
+                          <Text style={styles.planBadgeText}>{plan.badge}</Text>
                         </View>
-                        <Text style={styles.styleName}>{s.label}</Text>
-                        <Text style={styles.stylePrice}>₹{s.price}</Text>
-                        {selectedStyle === s.id && (
-                          <View style={styles.checkBadge}>
-                            <Check size={10} color="#FFFFFF" />
-                          </View>
-                        )}
-                      </TouchableOpacity>
+                      )}
+                    </View>
+                    <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 4, marginTop: 4 }}>
+                      {plan.features.map((f, i) => (
+                        <View key={i} style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+                          <Check size={10} color="#10B981" />
+                          <Text style={styles.planFeatureText}>{f}</Text>
+                        </View>
+                      ))}
+                    </View>
+                  </View>
+                </View>
+                <View style={{ alignItems: 'flex-end' }}>
+                  <Text style={[styles.planPrice, selectedPlanId === plan.id && { color: '#3E6BEC' }]}>₹{plan.price.toLocaleString()}</Text>
+                  {plan.originalPrice && <Text style={styles.planOrigPrice}>₹{plan.originalPrice.toLocaleString()}</Text>}
+                </View>
+              </TouchableOpacity>
+            ))}
+
+            {/* Quantity */}
+            <Text style={styles.sectionHeader}>QUANTITY</Text>
+            <View style={styles.qtyRow}>
+              <TouchableOpacity style={styles.qtyBtn} onPress={() => setQty(q => Math.max(1, q - 1))} activeOpacity={0.8}>
+                <Minus size={16} color="#FFFFFF" />
+              </TouchableOpacity>
+              <Text style={styles.qtyText}>{qty}</Text>
+              <TouchableOpacity style={styles.qtyBtn} onPress={() => setQty(q => q + 1)} activeOpacity={0.8}>
+                <Plus size={16} color="#FFFFFF" />
+              </TouchableOpacity>
+              <Text style={styles.qtyTotal}>= ₹{(activePlan.price * qty).toLocaleString()}</Text>
+            </View>
+
+            {/* CTA Buttons */}
+            <TouchableOpacity style={styles.addToCartBtn} onPress={addToCart} activeOpacity={0.85}>
+              <ShoppingCart size={16} color="#FFFFFF" />
+              <Text style={styles.addToCartText}>Add to Cart</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.buyNowLargeBtn}
+              onPress={() => { addToCart(); setView('cart'); }}
+              activeOpacity={0.85}
+            >
+              <Text style={styles.buyNowLargeText}>Buy Now</Text>
+            </TouchableOpacity>
+
+            {/* Trust Badges */}
+            <View style={styles.trustRow}>
+              <View style={styles.trustItem}><Truck size={14} color="#10B981" /><Text style={styles.trustText}>Fast Delivery</Text></View>
+              <View style={styles.trustItem}><Clock size={14} color="#F59E0B" /><Text style={styles.trustText}>5-8 Days</Text></View>
+              <View style={styles.trustItem}><Shield size={14} color="#3E6BEC" /><Text style={styles.trustText}>Quality Guaranteed</Text></View>
+            </View>
+
+            {/* Discount Banner */}
+            <View style={styles.offerBanner}>
+              <View style={styles.offerItem}>
+                <Tag size={14} color="#EF4444" />
+                <Text style={styles.offerText}>70% OFF on all standees</Text>
+              </View>
+              <View style={styles.offerItem}>
+                <Award size={14} color="#10B981" />
+                <Text style={styles.offerText}>Extra 10% on orders above ₹3000</Text>
+              </View>
+            </View>
+
+            {/* How It Works */}
+            <TouchableOpacity style={styles.collapseHeader} onPress={() => setShowHowItWorks(v => !v)} activeOpacity={0.8}>
+              <Text style={styles.collapseTitle}>How It Works</Text>
+              {showHowItWorks ? <ChevronUp size={18} color="#71717A" /> : <ChevronDown size={18} color="#71717A" />}
+            </TouchableOpacity>
+            {showHowItWorks && (
+              <View style={styles.collapseBody}>
+                {HOW_IT_WORKS.map(item => {
+                  const Icon = item.icon;
+                  return (
+                    <View key={item.step} style={styles.howRow}>
+                      <View style={styles.howCircle}><Text style={styles.howNum}>{item.step}</Text></View>
+                      <View style={{ flex: 1 }}>
+                        <Text style={styles.howTitle}>{item.title}</Text>
+                        <Text style={styles.howDesc}>{item.desc}</Text>
+                      </View>
+                    </View>
+                  );
+                })}
+              </View>
+            )}
+
+            {/* Benefits */}
+            <TouchableOpacity style={styles.collapseHeader} onPress={() => setShowBenefits(v => !v)} activeOpacity={0.8}>
+              <Text style={styles.collapseTitle}>Benefits for Your Business</Text>
+              {showBenefits ? <ChevronUp size={18} color="#71717A" /> : <ChevronDown size={18} color="#71717A" />}
+            </TouchableOpacity>
+            {showBenefits && (
+              <View style={styles.collapseBody}>
+                <View style={{ flexDirection: 'row', flexWrap: 'wrap', gap: 10 }}>
+                  {BENEFITS.map((b, i) => {
+                    const Icon = b.icon;
+                    return (
+                      <View key={i} style={[styles.benefitCard, { borderColor: b.color + '40' }]}>
+                        <Icon size={18} color={b.color} />
+                        <Text style={styles.benefitTitle}>{b.title}</Text>
+                        <Text style={styles.benefitDesc}>{b.desc}</Text>
+                      </View>
                     );
                   })}
                 </View>
               </View>
-
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>Theme Color</Text>
-                <View style={styles.colorRow}>
-                  {COLOR_OPTIONS.map(c => (
-                    <TouchableOpacity
-                      key={c.id}
-                      onPress={() => setSelectedColor(c.id)}
-                      style={[styles.colorDot, { backgroundColor: c.color }, selectedColor === c.id && styles.colorDotSelected]}
-                    />
-                  ))}
-                </View>
-                <Text style={styles.colorLabel}>{selectedTheme.label}</Text>
-              </View>
-
-              <TouchableOpacity style={styles.primaryBtn} onPress={() => setStep('preview')}>
-                <Text style={styles.primaryBtnText}>Preview Card</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-
-          {/* STEP 2: PREVIEW */}
-          {step === 'preview' && (
-            <View>
-              <View style={[styles.mockCard, { backgroundColor: selectedTheme.color }]}>
-                <Text style={[styles.mockBusiness, { color: selectedColor === 'white' ? '#18181B' : '#FFFFFF' }]}>
-                  {businessName}
-                </Text>
-                <Text style={[styles.mockTagline, { color: selectedColor === 'white' ? '#3F3F46' : '#FFFFFF99' }]}>
-                  {tagline}
-                </Text>
-                <View style={styles.mockQrBox}>
-                  <Text style={styles.mockQrText}>[ QR CODE ]</Text>
-                  <Text style={styles.mockQrSub}>Scan to leave a review</Text>
-                </View>
-                <View style={styles.mockAddressRow}>
-                  <MapPin size={13} color={selectedColor === 'white' ? '#52525B' : '#FFFFFF80'} />
-                  <Text style={[styles.mockAddress, { color: selectedColor === 'white' ? '#52525B' : '#FFFFFF80' }]}>
-                    {address}
-                  </Text>
-                </View>
-                <View style={styles.mockBadge}>
-                  <selectedCard.Icon size={12} color="#FFFFFF" style={{ marginRight: 4 }} />
-                  <Text style={styles.mockBadgeText}>{selectedCard.label}</Text>
-                </View>
-              </View>
-
-              <View style={styles.infoBox}>
-                <Info size={16} color="#93C5FD" style={{ marginRight: 8, marginTop: 1 }} />
-                <Text style={styles.infoText}>Your GMB review link will be embedded as a QR code. Customers scan, land on a curated review prompt, and tap to post directly on Google.</Text>
-              </View>
-
-              <View style={styles.row}>
-                <TouchableOpacity style={styles.outlineBtn} onPress={() => setStep('customise')}>
-                  <Text style={styles.outlineBtnText}>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={[styles.primaryBtn, { flex: 1 }]} onPress={() => setStep('order')}>
-                  <Text style={styles.primaryBtnText}>Place Order</Text>
-                </TouchableOpacity>
-              </View>
-            </View>
-          )}
-
-          {/* STEP 3: ORDER */}
-          {step === 'order' && (
-            <View>
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>Order Summary</Text>
-                <View style={styles.summaryRow}>
-                  <Text style={styles.summaryKey}>Card Type</Text>
-                  <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
-                    <selectedCard.Icon size={14} color="#8E9196" />
-                    <Text style={styles.summaryVal}>{selectedCard.label}</Text>
-                  </View>
-                </View>
-                <View style={styles.summaryRow}>
-                  <Text style={styles.summaryKey}>Theme</Text>
-                  <Text style={styles.summaryVal}>{selectedTheme.label}</Text>
-                </View>
-                <View style={styles.summaryRow}>
-                  <Text style={styles.summaryKey}>For</Text>
-                  <Text style={styles.summaryVal}>{businessName}</Text>
-                </View>
-                <View style={styles.divider} />
-
-                <Text style={styles.fieldLabel}>Quantity</Text>
-                <TextInput
-                  style={styles.input}
-                  value={qty}
-                  onChangeText={setQty}
-                  keyboardType="number-pad"
-                  placeholderTextColor="#52525B"
-                />
-
-                <View style={styles.totalRow}>
-                  <Text style={styles.totalLabel}>Total</Text>
-                  <Text style={styles.totalValue}>₹{total.toLocaleString()}</Text>
-                </View>
-              </View>
-
-              <View style={styles.card}>
-                <Text style={styles.cardTitle}>Shipping Address</Text>
-                <TextInput
-                  style={[styles.input, { height: 80, textAlignVertical: 'top' }]}
-                  placeholder="Full delivery address..."
-                  placeholderTextColor="#52525B"
-                  multiline
-                />
-              </View>
-
-              <TouchableOpacity style={styles.greenBtn} onPress={handleOrder}>
-                <Text style={styles.primaryBtnText}>Confirm Order - ₹{total.toLocaleString()}</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-        </View>
-      )}
-
-      {/* ── MODE: WRITE NFC TAG ── */}
-      {mode === 'nfc' && (
-        <View>
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>Live Review Slug</Text>
-            <Text style={styles.fieldLabel}>Google Review Shortname</Text>
-            <TextInput
-              style={styles.input}
-              placeholder="Google Review Shortname"
-              placeholderTextColor="#52525B"
-              value={slug}
-              onChangeText={setSlug}
-              autoCapitalize="none"
-            />
-            <Text style={styles.subtext}>Resolves to: https://forscha.com/r/{slug}</Text>
-          </View>
-
-          <View style={styles.card}>
-            <Text style={styles.cardTitle}>NFC Card Programmer</Text>
-            <Text style={styles.nfcHeader}>Tap to Write NFC Keytags</Text>
-            <Text style={styles.nfcBody}>
-              Program physical cards or stickers instantly. Place the blank tag on the back of your phone near the NFC reader antenna.
-            </Text>
-
-            {programming ? (
-              <View style={styles.progressContainer}>
-                <ActivityIndicator size="large" color="#3E6BEC" />
-                <Text style={styles.progressText}>Programming Tag... {progProgress}%</Text>
-              </View>
-            ) : (
-              <TouchableOpacity style={styles.nfcBtn} onPress={handleWriteNFC}>
-                <Rss size={16} color="#FFFFFF" style={{ marginRight: 8 }} />
-                <Text style={styles.nfcBtnText}>Start NFC Write Sequence</Text>
-              </TouchableOpacity>
             )}
-          </View>
-        </View>
-      )}
 
-      <View style={{ height: 40 }} />
-    </ScrollView>
-  </View>
+            {/* Product Details */}
+            <Text style={styles.sectionHeader}>PRODUCT DETAILS</Text>
+            <View style={styles.detailCard}>
+              <View style={styles.detailRow}><Text style={styles.detailKey}>Brand</Text><Text style={styles.detailVal}>{selectedProduct.brand}</Text></View>
+              <View style={styles.detailRow}><Text style={styles.detailKey}>Size</Text><Text style={styles.detailVal}>{selectedProduct.size}</Text></View>
+              <View style={styles.detailRow}><Text style={styles.detailKey}>Material</Text><Text style={styles.detailVal}>{selectedProduct.material}</Text></View>
+              <View style={styles.detailRow}><Text style={styles.detailKey}>Colour</Text><Text style={styles.detailVal}>{selectedProduct.color}</Text></View>
+              <View style={styles.detailRow}><Text style={styles.detailKey}>NFC-Enabled</Text><Text style={styles.detailVal}>{selectedProduct.nfcEnabled ? 'Yes, Tap access' : 'No'}</Text></View>
+              <View style={styles.detailRow}><Text style={styles.detailKey}>Technology</Text><Text style={styles.detailVal}>AI-Powered</Text></View>
+            </View>
+
+            {/* Description */}
+            <Text style={styles.sectionHeader}>PRODUCT DESCRIPTION</Text>
+            <View style={styles.detailCard}>
+              <Text style={styles.descText}>{selectedProduct.description}</Text>
+              {selectedProduct.features.map((f, i) => (
+                <View key={i} style={styles.featureRow}>
+                  <Check size={13} color="#10B981" />
+                  <Text style={styles.featureText}>{f}</Text>
+                </View>
+              ))}
+            </View>
+
+            {/* Shipping */}
+            <Text style={styles.sectionHeader}>SHIPPING</Text>
+            <View style={styles.detailCard}>
+              <View style={styles.shipRow}><Truck size={15} color="#10B981" /><Text style={styles.shipText}>Fast Shipping and Delivery</Text></View>
+              <View style={styles.shipRow}><Clock size={15} color="#F59E0B" /><Text style={styles.shipText}>Delivered in 5-8 working days</Text></View>
+              <View style={styles.shipRow}><Package size={15} color="#3E6BEC" /><Text style={styles.shipText}>Shipping partners DTDC & Amazon Delivery</Text></View>
+              <View style={styles.shipRow}><Shield size={15} color="#8B5CF6" /><Text style={styles.shipText}>Free shipping on all orders</Text></View>
+            </View>
+
+            <View style={{ height: 40 }} />
+          </View>
+        </ScrollView>
+      </View>
+    );
+  }
+
+  // ── CART VIEW ────────────────────────────────────────────────────────────────
+  return (
+    <View style={styles.screen}>
+      {renderHeader('My Cart', () => setView('catalog'))}
+
+      {cart.length === 0 ? (
+        <View style={styles.emptyCart}>
+          <ShoppingCart size={60} color="#202025" />
+          <Text style={styles.emptyCartTitle}>Your cart is empty</Text>
+          <Text style={styles.emptyCartSub}>Browse our standees and digital cards to get started</Text>
+          <TouchableOpacity style={styles.primaryBtn} onPress={() => setView('catalog')} activeOpacity={0.85}>
+            <Text style={styles.primaryBtnText}>Browse Products</Text>
+          </TouchableOpacity>
+        </View>
+      ) : (
+        <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16 }}>
+          {/* Cart Items */}
+          {cart.map((item, idx) => (
+            <View key={idx} style={styles.cartItem}>
+              <View style={[styles.cartItemEmoji, { backgroundColor: item.product.badgeColor + '18' }]}>
+                <Text style={{ fontSize: 28 }}>{item.product.emoji}</Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Text style={styles.cartItemName} numberOfLines={2}>{item.product.shortName}</Text>
+                <Text style={styles.cartItemPlan}>{item.plan.label}</Text>
+                <View style={styles.cartQtyRow}>
+                  <TouchableOpacity style={styles.cartQtyBtn} onPress={() => changeCartQty(item.product.id, item.plan.id, -1)}>
+                    <Minus size={12} color="#FFFFFF" />
+                  </TouchableOpacity>
+                  <Text style={styles.cartQtyText}>{item.qty}</Text>
+                  <TouchableOpacity style={styles.cartQtyBtn} onPress={() => changeCartQty(item.product.id, item.plan.id, 1)}>
+                    <Plus size={12} color="#FFFFFF" />
+                  </TouchableOpacity>
+                  <Text style={styles.cartItemTotal}>₹{(item.plan.price * item.qty).toLocaleString()}</Text>
+                </View>
+              </View>
+              <TouchableOpacity onPress={() => removeFromCart(item.product.id, item.plan.id)} style={styles.removeBtn}>
+                <Trash2 size={16} color="#EF4444" />
+              </TouchableOpacity>
+            </View>
+          ))}
+
+          {/* Order Summary */}
+          <View style={styles.summaryCard}>
+            <Text style={styles.summaryTitle}>Order Summary</Text>
+            {cart.map((item, idx) => (
+              <View key={idx} style={styles.summaryLine}>
+                <Text style={styles.summaryLineText} numberOfLines={1}>{item.product.shortName} ×{item.qty}</Text>
+                <Text style={styles.summaryLineVal}>₹{(item.plan.price * item.qty).toLocaleString()}</Text>
+              </View>
+            ))}
+            <View style={styles.summaryDivider} />
+            <View style={styles.summaryLine}>
+              <Text style={styles.summaryLineText}>Shipping</Text>
+              <Text style={{ color: '#10B981', fontSize: 13, fontWeight: '700' }}>FREE</Text>
+            </View>
+            <View style={styles.summaryLine}>
+              <Text style={[styles.summaryLineText, { color: '#FFFFFF', fontWeight: '800', fontSize: 15 }]}>Total</Text>
+              <Text style={styles.cartTotal}>₹{cartTotal.toLocaleString()}</Text>
+            </View>
+          </View>
+
+          {/* Shipping Address */}
+          <Text style={styles.sectionHeader}>SHIPPING ADDRESS</Text>
+          <TextInput
+            style={styles.addressInput}
+            placeholder="Enter your full delivery address..."
+            placeholderTextColor="#52525B"
+            value={shippingAddress}
+            onChangeText={setShippingAddress}
+            multiline
+            numberOfLines={3}
+          />
+
+          {/* Trust Badges */}
+          <View style={styles.trustRow}>
+            <View style={styles.trustItem}><Truck size={14} color="#10B981" /><Text style={styles.trustText}>Free Delivery</Text></View>
+            <View style={styles.trustItem}><Clock size={14} color="#F59E0B" /><Text style={styles.trustText}>5-8 Days</Text></View>
+            <View style={styles.trustItem}><Shield size={14} color="#3E6BEC" /><Text style={styles.trustText}>Guaranteed</Text></View>
+          </View>
+
+          {/* Place Order */}
+          <TouchableOpacity style={styles.placeOrderBtn} onPress={placeOrder} activeOpacity={0.85}>
+            <Text style={styles.placeOrderText}>Place Order — ₹{cartTotal.toLocaleString()}</Text>
+          </TouchableOpacity>
+
+          <View style={{ height: 40 }} />
+        </ScrollView>
+      )}
+    </View>
   );
 }
 
+// ─── Styles ───────────────────────────────────────────────────────────────────
 const styles = StyleSheet.create({
+  screen: { flex: 1, backgroundColor: '#070709' },
   header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderColor: '#202025',
-    backgroundColor: '#070709',
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingVertical: 14, paddingHorizontal: 16,
+    borderBottomWidth: 1, borderColor: '#202025', backgroundColor: '#070709',
   },
   backBtn: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#0F0F12',
-    borderWidth: 1,
-    borderColor: '#202025',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  headerTitle: {
-    fontSize: 16,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    letterSpacing: 0.3,
-  },
-  container: { flex: 1, backgroundColor: '#070709', padding: 16 },
-  segmentContainer: {
-    flexDirection: 'row',
-    backgroundColor: '#0F0F12',
-    borderColor: '#202025',
-    borderWidth: 1,
-    borderRadius: 14,
-    padding: 4,
-    marginBottom: 20,
-  },
-  segmentBtn: {
-    flex: 1,
-    paddingVertical: 10,
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-  segmentBtnActive: {
-    backgroundColor: '#3E6BEC',
-  },
-  segmentText: {
-    fontSize: 13,
-    fontWeight: '700',
-    color: '#71717A',
-  },
-  segmentTextActive: {
-    color: '#FFFFFF',
-  },
-  stepRow: { flexDirection: 'row', alignItems: 'center', marginBottom: 24, marginTop: 8 },
-  stepItem: { alignItems: 'center', gap: 4 },
-  stepCircle: {
-    width: 32, height: 32, borderRadius: 16, backgroundColor: '#16161A',
+    width: 40, height: 40, borderRadius: 20, backgroundColor: '#0F0F12',
     borderWidth: 1, borderColor: '#202025', alignItems: 'center', justifyContent: 'center',
   },
-  stepCircleActive: { backgroundColor: '#3E6BEC', borderColor: '#3E6BEC' },
-  stepNum: { fontSize: 13, fontWeight: '700', color: '#52525B' },
-  stepNumActive: { color: '#FFFFFF' },
-  stepLabel: { fontSize: 10, color: '#52525B', fontWeight: '600' },
-  stepLabelActive: { color: '#3E6BEC' },
-  stepLine: { flex: 1, height: 1, backgroundColor: '#202025', marginBottom: 16 },
-  card: {
-    backgroundColor: '#0F0F12', borderColor: '#202025', borderWidth: 1,
-    borderRadius: 18, padding: 16, marginBottom: 16,
+  headerTitle: { fontSize: 16, fontWeight: '800', color: '#FFFFFF', letterSpacing: 0.3 },
+  cartIconBtn: {
+    width: 40, height: 40, borderRadius: 20, backgroundColor: '#3E6BEC',
+    alignItems: 'center', justifyContent: 'center', position: 'relative',
   },
-  cardTitle: { fontSize: 13, fontWeight: '800', color: '#71717A', textTransform: 'uppercase', marginBottom: 14, letterSpacing: 0.5 },
-  fieldLabel: { fontSize: 12, color: '#71717A', fontWeight: '600', marginBottom: 6 },
-  input: {
-    backgroundColor: '#070709', borderColor: '#202025', borderWidth: 1,
-    borderRadius: 10, padding: 12, color: '#FFFFFF', fontSize: 14, marginBottom: 12,
+  cartBadge: {
+    position: 'absolute', top: -4, right: -4, backgroundColor: '#EF4444',
+    borderRadius: 9, minWidth: 18, height: 18, alignItems: 'center', justifyContent: 'center', paddingHorizontal: 3,
   },
-  styleGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
-  styleCard: {
-    width: '48%', backgroundColor: '#16161A', borderColor: '#202025', borderWidth: 1,
-    borderRadius: 12, padding: 12, alignItems: 'center', position: 'relative',
+  cartBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' },
+
+  // Filters
+  filterRow: { paddingVertical: 12 },
+  filterChip: {
+    paddingHorizontal: 14, paddingVertical: 7, borderRadius: 20,
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
   },
-  styleCardActive: { borderColor: '#3E6BEC', backgroundColor: '#3E6BEC12' },
-  iconBox: {
-    width: 38,
-    height: 38,
-    borderRadius: 10,
+  filterChipActive: { backgroundColor: '#3E6BEC', borderColor: '#3E6BEC' },
+  filterChipText: { fontSize: 12, fontWeight: '700', color: '#71717A' },
+  filterChipTextActive: { color: '#FFFFFF' },
+  countText: { fontSize: 12, color: '#52525B', paddingHorizontal: 16, marginBottom: 8, fontWeight: '500' },
+
+  // Catalog Grid
+  catalogGrid: { paddingHorizontal: 12 },
+  grid: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', gap: 12 },
+  productCard: {
+    width: '47.5%', backgroundColor: '#0F0F12',
+    borderRadius: 16, borderWidth: 1, borderColor: '#202025', overflow: 'hidden',
+  },
+  productImageBox: {
+    height: 130, alignItems: 'center', justifyContent: 'center',
+    position: 'relative',
+  },
+  productEmoji: { fontSize: 52 },
+  discountBadge: {
+    position: 'absolute', top: 8, left: 8,
+    backgroundColor: '#EF4444', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2,
+  },
+  discountText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' },
+  nfcBadge: {
+    position: 'absolute', bottom: 8, right: 8,
+    backgroundColor: '#3E6BEC', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 3,
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+  },
+  nfcBadgeText: { color: '#FFFFFF', fontSize: 9, fontWeight: '700' },
+  productInfo: { padding: 10 },
+  productName: { fontSize: 11, fontWeight: '700', color: '#FFFFFF', lineHeight: 15, marginBottom: 3 },
+  productBrand: { fontSize: 10, color: '#52525B', fontWeight: '500', marginBottom: 4 },
+  ratingRow: { flexDirection: 'row', alignItems: 'center', gap: 3, marginBottom: 5 },
+  ratingText: { fontSize: 11, color: '#F59E0B', fontWeight: '700' },
+  reviewCount: { fontSize: 10, color: '#52525B' },
+  priceRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 8 },
+  price: { fontSize: 14, fontWeight: '900', color: '#FFFFFF' },
+  originalPrice: { fontSize: 11, color: '#52525B', textDecorationLine: 'line-through' },
+  buyNowBtn: {
+    backgroundColor: '#3E6BEC', borderRadius: 8, paddingVertical: 7,
     alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 8,
   },
-  styleName: { fontSize: 12, fontWeight: '700', color: '#FFFFFF', textAlign: 'center' },
-  stylePrice: { fontSize: 12, color: '#10B981', fontWeight: '800', marginTop: 4 },
-  checkBadge: {
-    position: 'absolute', top: 8, right: 8, backgroundColor: '#3E6BEC',
-    width: 18, height: 18, borderRadius: 9, alignItems: 'center', justifyContent: 'center',
+  buyNowText: { color: '#FFFFFF', fontSize: 11, fontWeight: '800' },
+
+  // Detail View
+  heroBox: {
+    height: 240, alignItems: 'center', justifyContent: 'center', position: 'relative',
   },
-  colorRow: { flexDirection: 'row', gap: 12, marginBottom: 8 },
-  colorDot: { width: 34, height: 34, borderRadius: 17, borderWidth: 2, borderColor: 'transparent' },
-  colorDotSelected: { borderColor: '#FFFFFF' },
-  colorLabel: { fontSize: 12, color: '#71717A', fontWeight: '600' },
-  primaryBtn: {
-    backgroundColor: '#3E6BEC', paddingVertical: 15, borderRadius: 14,
-    alignItems: 'center', marginBottom: 12,
+  heroEmoji: { fontSize: 100 },
+  discountBadgeLarge: {
+    position: 'absolute', top: 16, left: 16,
+    backgroundColor: '#EF4444', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4,
+    flexDirection: 'row', alignItems: 'center', gap: 4,
   },
+  discountBadgeLargeText: { color: '#FFFFFF', fontSize: 13, fontWeight: '900' },
+  detailBrand: { fontSize: 12, color: '#52525B', fontWeight: '600', marginBottom: 4 },
+  detailName: { fontSize: 15, fontWeight: '800', color: '#FFFFFF', lineHeight: 22, marginBottom: 12 },
+  specsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 6, marginBottom: 12 },
+  specChip: {
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 8, paddingHorizontal: 8, paddingVertical: 4,
+  },
+  specText: { fontSize: 10, color: '#93C5FD', fontWeight: '600' },
+  detailRatingRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 14 },
+  detailRatingText: { fontSize: 12, color: '#71717A', marginLeft: 4 },
+  priceBanner: {
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 14, padding: 14, marginBottom: 20,
+  },
+  detailPrice: { fontSize: 28, fontWeight: '900', color: '#FFFFFF' },
+  detailOriginalPrice: { fontSize: 15, color: '#52525B', textDecorationLine: 'line-through', alignSelf: 'flex-end', marginBottom: 4 },
+  saveBadge: { backgroundColor: '#10B98120', borderRadius: 6, paddingHorizontal: 8, paddingVertical: 3 },
+  saveText: { color: '#10B981', fontSize: 12, fontWeight: '700' },
+  freeDelivery: { fontSize: 12, color: '#10B981', fontWeight: '700', marginTop: 4 },
+  sectionHeader: {
+    fontSize: 11, fontWeight: '900', color: '#71717A', letterSpacing: 1,
+    marginBottom: 12, marginTop: 4, textTransform: 'uppercase',
+  },
+
+  // Plan Selector
+  planCard: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start',
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 14, padding: 14, marginBottom: 10,
+  },
+  planCardActive: { borderColor: '#3E6BEC', backgroundColor: '#3E6BEC0A' },
+  planLeft: { flexDirection: 'row', alignItems: 'flex-start', gap: 10, flex: 1 },
+  planRadio: {
+    width: 20, height: 20, borderRadius: 10,
+    borderWidth: 2, borderColor: '#202025', alignItems: 'center', justifyContent: 'center', marginTop: 2,
+  },
+  planRadioActive: { borderColor: '#3E6BEC' },
+  planRadioDot: { width: 10, height: 10, borderRadius: 5, backgroundColor: '#3E6BEC' },
+  planLabel: { fontSize: 12, fontWeight: '700', color: '#FFFFFF', flex: 1, flexWrap: 'wrap', lineHeight: 17 },
+  planBadge: { borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2 },
+  planBadgeText: { color: '#FFFFFF', fontSize: 9, fontWeight: '900' },
+  planFeatureText: { fontSize: 10, color: '#71717A' },
+  planPrice: { fontSize: 16, fontWeight: '900', color: '#FFFFFF' },
+  planOrigPrice: { fontSize: 11, color: '#52525B', textDecorationLine: 'line-through', textAlign: 'right' },
+
+  // Qty
+  qtyRow: { flexDirection: 'row', alignItems: 'center', gap: 14, marginBottom: 20 },
+  qtyBtn: {
+    width: 38, height: 38, borderRadius: 10,
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  qtyText: { fontSize: 18, fontWeight: '800', color: '#FFFFFF', minWidth: 24, textAlign: 'center' },
+  qtyTotal: { fontSize: 16, fontWeight: '800', color: '#10B981', marginLeft: 8 },
+
+  // CTA Buttons
+  addToCartBtn: {
+    backgroundColor: '#0F0F12', borderWidth: 1.5, borderColor: '#3E6BEC',
+    borderRadius: 14, paddingVertical: 15, flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'center', gap: 8, marginBottom: 10,
+  },
+  addToCartText: { color: '#3E6BEC', fontSize: 14, fontWeight: '800' },
+  buyNowLargeBtn: {
+    backgroundColor: '#3E6BEC', borderRadius: 14, paddingVertical: 15,
+    alignItems: 'center', marginBottom: 14,
+  },
+  buyNowLargeText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
+
+  // Trust Badges
+  trustRow: {
+    flexDirection: 'row', justifyContent: 'space-around',
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 12, padding: 12, marginBottom: 14,
+  },
+  trustItem: { alignItems: 'center', gap: 4 },
+  trustText: { fontSize: 10, color: '#71717A', fontWeight: '600' },
+
+  // Offer Banner
+  offerBanner: {
+    flexDirection: 'row', justifyContent: 'space-between',
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#EF444440',
+    borderRadius: 12, padding: 12, marginBottom: 14, gap: 8,
+  },
+  offerItem: { flexDirection: 'row', alignItems: 'center', gap: 6, flex: 1 },
+  offerText: { fontSize: 11, color: '#D1D5DB', fontWeight: '600', flex: 1, lineHeight: 15 },
+
+  // Collapse Sections
+  collapseHeader: {
+    flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center',
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 12, padding: 14, marginBottom: 2,
+  },
+  collapseTitle: { fontSize: 14, fontWeight: '700', color: '#FFFFFF' },
+  collapseBody: {
+    backgroundColor: '#0A0A0C', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 12, padding: 14, marginBottom: 12,
+  },
+
+  // How It Works
+  howRow: { flexDirection: 'row', gap: 12, marginBottom: 14 },
+  howCircle: {
+    width: 28, height: 28, borderRadius: 14, backgroundColor: '#3E6BEC',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  howNum: { color: '#FFFFFF', fontSize: 12, fontWeight: '900' },
+  howTitle: { fontSize: 13, fontWeight: '700', color: '#FFFFFF', marginBottom: 2 },
+  howDesc: { fontSize: 11, color: '#71717A', lineHeight: 15 },
+
+  // Benefits
+  benefitCard: {
+    width: '47.5%', backgroundColor: '#0F0F12',
+    borderWidth: 1, borderRadius: 12, padding: 12, gap: 6,
+  },
+  benefitTitle: { fontSize: 12, fontWeight: '700', color: '#FFFFFF' },
+  benefitDesc: { fontSize: 11, color: '#71717A', lineHeight: 15 },
+
+  // Product Detail Card
+  detailCard: {
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 14, padding: 14, marginBottom: 14,
+  },
+  detailRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
+  detailKey: { fontSize: 12, color: '#71717A' },
+  detailVal: { fontSize: 12, color: '#FFFFFF', fontWeight: '700' },
+  descText: { fontSize: 13, color: '#D1D5DB', lineHeight: 20, marginBottom: 12 },
+  featureRow: { flexDirection: 'row', gap: 8, alignItems: 'flex-start', marginBottom: 6 },
+  featureText: { fontSize: 12, color: '#D1D5DB', flex: 1, lineHeight: 17 },
+  shipRow: { flexDirection: 'row', gap: 10, alignItems: 'center', marginBottom: 10 },
+  shipText: { fontSize: 12, color: '#D1D5DB', flex: 1 },
+
+  // Cart View
+  emptyCart: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 40, gap: 12 },
+  emptyCartTitle: { fontSize: 18, fontWeight: '800', color: '#FFFFFF' },
+  emptyCartSub: { fontSize: 13, color: '#71717A', textAlign: 'center', lineHeight: 20 },
+  primaryBtn: { backgroundColor: '#3E6BEC', paddingVertical: 14, paddingHorizontal: 32, borderRadius: 14, marginTop: 8 },
   primaryBtnText: { color: '#FFFFFF', fontSize: 14, fontWeight: '800' },
-  greenBtn: {
-    backgroundColor: '#10B981', paddingVertical: 15, borderRadius: 14,
+
+  cartItem: {
+    flexDirection: 'row', gap: 12, alignItems: 'flex-start',
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 16, padding: 14, marginBottom: 12,
+  },
+  cartItemEmoji: { width: 60, height: 60, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  cartItemName: { fontSize: 12, fontWeight: '700', color: '#FFFFFF', lineHeight: 17, marginBottom: 3 },
+  cartItemPlan: { fontSize: 11, color: '#71717A', marginBottom: 8 },
+  cartQtyRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
+  cartQtyBtn: {
+    width: 28, height: 28, borderRadius: 8, backgroundColor: '#16161A',
+    borderWidth: 1, borderColor: '#202025', alignItems: 'center', justifyContent: 'center',
+  },
+  cartQtyText: { fontSize: 14, fontWeight: '800', color: '#FFFFFF', minWidth: 20, textAlign: 'center' },
+  cartItemTotal: { fontSize: 14, fontWeight: '900', color: '#10B981', marginLeft: 4 },
+  removeBtn: { padding: 4 },
+
+  summaryCard: {
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 16, padding: 16, marginBottom: 14,
+  },
+  summaryTitle: { fontSize: 13, fontWeight: '800', color: '#71717A', textTransform: 'uppercase', letterSpacing: 0.5, marginBottom: 12 },
+  summaryLine: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 8 },
+  summaryLineText: { fontSize: 13, color: '#71717A', flex: 1, marginRight: 8 },
+  summaryLineVal: { fontSize: 13, color: '#FFFFFF', fontWeight: '700' },
+  summaryDivider: { height: 1, backgroundColor: '#202025', marginVertical: 10 },
+  cartTotal: { fontSize: 20, fontWeight: '900', color: '#3E6BEC' },
+  addressInput: {
+    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    borderRadius: 12, padding: 14, color: '#FFFFFF', fontSize: 14,
+    textAlignVertical: 'top', marginBottom: 14, minHeight: 80,
+  },
+  placeOrderBtn: {
+    backgroundColor: '#10B981', borderRadius: 14, paddingVertical: 17,
     alignItems: 'center', marginBottom: 12,
   },
-  outlineBtn: {
-    backgroundColor: '#16161A', borderColor: '#202025', borderWidth: 1,
-    paddingVertical: 15, paddingHorizontal: 20, borderRadius: 14,
-    alignItems: 'center', marginBottom: 12, marginRight: 10,
-  },
-  outlineBtnText: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
-  row: { flexDirection: 'row' },
-  mockCard: {
-    borderRadius: 20, padding: 24, marginBottom: 16,
-    shadowColor: '#000', shadowOffset: { width: 0, height: 8 }, shadowOpacity: 0.4, shadowRadius: 16, elevation: 10,
-  },
-  mockBusiness: { fontSize: 22, fontWeight: '900', marginBottom: 4 },
-  mockTagline: { fontSize: 13, marginBottom: 20 },
-  mockQrBox: {
-    backgroundColor: '#FFFFFF', borderRadius: 12, padding: 20,
-    alignItems: 'center', marginBottom: 16,
-  },
-  mockQrText: { fontSize: 16, color: '#18181B', fontWeight: '800' },
-  mockQrSub: { fontSize: 11, color: '#71717A', marginTop: 4 },
-  mockAddressRow: { flexDirection: 'row', alignItems: 'center', gap: 4, marginBottom: 12 },
-  mockAddress: { fontSize: 12 },
-  mockBadge: { backgroundColor: '#FFFFFF20', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4, alignSelf: 'flex-start', flexDirection: 'row', alignItems: 'center' },
-  mockBadgeText: { fontSize: 11, color: '#FFFFFF', fontWeight: '700' },
-  infoBox: {
-    flexDirection: 'row',
-    backgroundColor: '#101726', borderColor: '#1D2D50', borderWidth: 1,
-    borderRadius: 14, padding: 14, marginBottom: 16,
-  },
-  infoText: { flex: 1, fontSize: 13, color: '#93C5FD', lineHeight: 18 },
-  summaryRow: { flexDirection: 'row', justifyContent: 'space-between', marginBottom: 10 },
-  summaryKey: { fontSize: 13, color: '#71717A' },
-  summaryVal: { fontSize: 13, color: '#FFFFFF', fontWeight: '700' },
-  divider: { height: 1, backgroundColor: '#202025', marginVertical: 12 },
-  totalRow: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginTop: 4 },
-  totalLabel: { fontSize: 15, color: '#FFFFFF', fontWeight: '800' },
-  totalValue: { fontSize: 22, color: '#3E6BEC', fontWeight: '900' },
-  
-  // NFC Programmer merged styles
-  subtext: {
-    fontSize: 11,
-    color: '#6B7280',
-    fontStyle: 'italic',
-    marginTop: 4,
-  },
-  nfcHeader: {
-    fontSize: 15,
-    fontWeight: '800',
-    color: '#FFFFFF',
-    marginBottom: 6,
-  },
-  nfcBody: {
-    fontSize: 12,
-    color: '#9CA3AF',
-    lineHeight: 16,
-    marginBottom: 16,
-  },
-  nfcBtn: {
-    flexDirection: 'row',
-    backgroundColor: '#16161A',
-    borderColor: '#202025',
-    borderWidth: 1,
-    paddingVertical: 12,
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  nfcBtnText: {
-    color: '#FFFFFF',
-    fontSize: 13,
-    fontWeight: '700',
-  },
-  progressContainer: {
-    alignItems: 'center',
-    paddingVertical: 10,
-  },
-  progressText: {
-    color: '#3E6BEC',
-    fontSize: 12,
-    fontWeight: '700',
-    marginTop: 8,
-  },
+  placeOrderText: { color: '#FFFFFF', fontSize: 15, fontWeight: '900' },
 });
