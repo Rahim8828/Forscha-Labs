@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity,
-  TextInput, Alert, FlatList,
+  TextInput, Alert, FlatList, Image,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -39,7 +39,7 @@ interface Product {
   description: string;
   features: string[];
   plans: Plan[];
-  emoji: string;
+  image: ReturnType<typeof require>;
   badgeColor: string;
 }
 
@@ -80,7 +80,7 @@ const PRODUCTS: Product[] = [
       { id: 'premium', label: 'Google Standee + AI Premium Plan', price: 3200, originalPrice: 6000, badge: 'Most Popular', features: ['2 Year AI Review Subscription', 'QR + NFC Setup', 'Advanced Analytics', 'Priority Support'] },
       { id: 'enterprise', label: 'Google Standee + AI Enterprise Plan', price: 5200, originalPrice: 8000, badge: 'Best Value', features: ['Lifetime AI Review Subscription', 'Multiple QR + NFC Setup', 'Full Analytics Dashboard', '24/7 Dedicated Support', 'Custom Branding'] },
     ],
-    emoji: '⭐',
+    image: require('../assets/products/product_1qr_standee.png'),
     badgeColor: '#F59E0B',
   },
   {
@@ -110,7 +110,7 @@ const PRODUCTS: Product[] = [
       { id: 'pro', label: 'Standee + AI Pro Plan', price: 1000, originalPrice: 3300, features: ['1 Year AI Review Subscription', 'Custom Design', 'QR Code Setup'] },
       { id: 'premium', label: 'Standee + AI Premium Plan', price: 2800, originalPrice: 5000, badge: 'Most Popular', features: ['2 Year AI Review Subscription', 'Premium Custom Design', 'QR + NFC Setup', 'Analytics Dashboard'] },
     ],
-    emoji: '🎨',
+    image: require('../assets/products/product_custom_1qr_standee.png'),
     badgeColor: '#8B5CF6',
   },
   {
@@ -141,7 +141,7 @@ const PRODUCTS: Product[] = [
       { id: 'premium', label: 'Double QR + AI Premium Plan', price: 3800, originalPrice: 7000, badge: 'Most Popular', features: ['2 Year AI Review Subscription', '2 QR + NFC', 'Analytics', 'Priority Support'] },
       { id: 'enterprise', label: 'Double QR + AI Enterprise Plan', price: 6000, originalPrice: 10000, badge: 'Best Value', features: ['Lifetime Subscription', 'Unlimited QR Codes', 'Full Suite', '24/7 Support'] },
     ],
-    emoji: '🔲',
+    image: require('../assets/products/product_2qr_standee.png'),
     badgeColor: '#3E6BEC',
   },
   {
@@ -170,7 +170,7 @@ const PRODUCTS: Product[] = [
       { id: 'pro', label: 'Custom 2QR + AI Pro Plan', price: 1100, originalPrice: 3700, features: ['1 Year AI Review Subscription', 'Custom Dual QR Design', 'QR Code Setup'] },
       { id: 'premium', label: 'Custom 2QR + AI Premium Plan', price: 3000, originalPrice: 5500, badge: 'Most Popular', features: ['2 Year AI Review Subscription', 'Premium Custom Design', 'Analytics Dashboard'] },
     ],
-    emoji: '✏️',
+    image: require('../assets/products/product_custom_2qr_standee.png'),
     badgeColor: '#10B981',
   },
   {
@@ -201,7 +201,7 @@ const PRODUCTS: Product[] = [
       { id: 'premium', label: 'Triple QR + AI Premium Plan', price: 4200, originalPrice: 8000, badge: 'Most Popular', features: ['2 Year AI Review Subscription', '3 QR + NFC', 'Full Analytics'] },
       { id: 'enterprise', label: 'Triple QR + AI Enterprise Plan', price: 6200, originalPrice: 12000, badge: 'Best Value', features: ['Lifetime Subscription', 'All Features', '24/7 Priority Support', 'Custom Branding'] },
     ],
-    emoji: '🏆',
+    image: require('../assets/products/product_3qr_standee.png'),
     badgeColor: '#F59E0B',
   },
   {
@@ -231,7 +231,7 @@ const PRODUCTS: Product[] = [
       { id: 'basic', label: 'NFC Card Basic', price: 501, originalPrice: 1700, features: ['1 NFC Card', 'Custom Design', 'Basic Digital Profile'] },
       { id: 'pro', label: 'NFC Card Pro', price: 1200, originalPrice: 3000, badge: 'Most Popular', features: ['3 NFC Cards', 'Premium Custom Design', 'Full Digital Profile', 'Analytics'] },
     ],
-    emoji: '💳',
+    image: require('../assets/products/product_nfc_business_card.png'),
     badgeColor: '#3E6BEC',
   },
   {
@@ -261,7 +261,7 @@ const PRODUCTS: Product[] = [
       { id: 'basic', label: 'Social NFC Card Basic', price: 550, originalPrice: 1800, features: ['1 Card', 'Custom Print', '1 Social Profile Link'] },
       { id: 'pro', label: 'Social NFC Card Pro', price: 1400, originalPrice: 3500, badge: 'Most Popular', features: ['5 Cards', 'Premium Print', 'Multiple Profile Links', 'Analytics Dashboard'] },
     ],
-    emoji: '📱',
+    image: require('../assets/products/product_social_media_card.png'),
     badgeColor: '#EC4899',
   },
   {
@@ -291,7 +291,7 @@ const PRODUCTS: Product[] = [
       { id: 'basic', label: 'Smart Menu Basic', price: 1000, originalPrice: 3300, features: ['1 Menu Card', 'Digital Menu Setup', 'QR + NFC Access', '1 Year Updates'] },
       { id: 'pro', label: 'Smart Menu Pro', price: 2500, originalPrice: 5000, badge: 'Most Popular', features: ['5 Menu Cards', 'Custom Design', 'QR + NFC', 'Lifetime Updates', 'Analytics'] },
     ],
-    emoji: '🍽️',
+    image: require('../assets/products/product_smart_menu_card.png'),
     badgeColor: '#F97316',
   },
 ];
@@ -456,7 +456,7 @@ export default function DigitalCardScreen() {
                   <View style={styles.discountBadge}>
                     <Text style={styles.discountText}>{product.discount}% OFF</Text>
                   </View>
-                  <Text style={styles.productEmoji}>{product.emoji}</Text>
+                  <Image source={product.image} style={styles.productImage} resizeMode="contain" />
                   {product.nfcEnabled && (
                     <View style={styles.nfcBadge}>
                       <Wifi size={9} color="#FFFFFF" />
@@ -507,7 +507,7 @@ export default function DigitalCardScreen() {
         <ScrollView showsVerticalScrollIndicator={false}>
           {/* Product Hero */}
           <View style={[styles.heroBox, { backgroundColor: selectedProduct.badgeColor + '18' }]}>
-            <Text style={styles.heroEmoji}>{selectedProduct.emoji}</Text>
+            <Image source={selectedProduct.image} style={styles.heroImage} resizeMode="contain" />
             {selectedProduct.nfcEnabled && (
               <View style={[styles.nfcBadge, { position: 'absolute', top: 16, right: 16 }]}>
                 <Wifi size={10} color="#FFFFFF" />
@@ -739,7 +739,7 @@ export default function DigitalCardScreen() {
           {cart.map((item, idx) => (
             <View key={idx} style={styles.cartItem}>
               <View style={[styles.cartItemEmoji, { backgroundColor: item.product.badgeColor + '18' }]}>
-                <Text style={{ fontSize: 28 }}>{item.product.emoji}</Text>
+                <Image source={item.product.image} style={styles.cartItemImage} resizeMode="contain" />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={styles.cartItemName} numberOfLines={2}>{item.product.shortName}</Text>
@@ -857,7 +857,7 @@ const styles = StyleSheet.create({
     height: 130, alignItems: 'center', justifyContent: 'center',
     position: 'relative',
   },
-  productEmoji: { fontSize: 52 },
+  productImage: { width: '90%', height: 110 },
   discountBadge: {
     position: 'absolute', top: 8, left: 8,
     backgroundColor: '#EF4444', borderRadius: 6, paddingHorizontal: 6, paddingVertical: 2,
@@ -888,7 +888,7 @@ const styles = StyleSheet.create({
   heroBox: {
     height: 240, alignItems: 'center', justifyContent: 'center', position: 'relative',
   },
-  heroEmoji: { fontSize: 100 },
+  heroImage: { width: '85%', height: 200 },
   discountBadgeLarge: {
     position: 'absolute', top: 16, left: 16,
     backgroundColor: '#EF4444', borderRadius: 8, paddingHorizontal: 10, paddingVertical: 4,
@@ -1038,6 +1038,7 @@ const styles = StyleSheet.create({
     borderRadius: 16, padding: 14, marginBottom: 12,
   },
   cartItemEmoji: { width: 60, height: 60, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  cartItemImage: { width: 50, height: 50 },
   cartItemName: { fontSize: 12, fontWeight: '700', color: '#FFFFFF', lineHeight: 17, marginBottom: 3 },
   cartItemPlan: { fontSize: 11, color: '#71717A', marginBottom: 8 },
   cartQtyRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
