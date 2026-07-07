@@ -1,0 +1,14 @@
+{
+  "name": "@forscha/database",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "generate": "prisma generate"
+  },
+  "dependencies": {
+    "@prisma/client": "^5.3.3"
+  },
+  "devDependencies": {
+    "prisma": "^5.3.3"
+  }
+}

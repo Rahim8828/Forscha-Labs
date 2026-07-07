@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  # Supabase local PostgreSQL database emulator
+  database:
+    image: postgres:15-alpine
+    container_name: forscha-postgres
+    restart: always
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secretpassword
+      POSTGRES_DB: forscha_labs
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  # Caching layer for CRM metrics, search queries, and rate limiting
+  redis:
+    image: redis:7-alpine
+    container_name: forscha-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+
+volumes:
+  pgdata:
+  redisdata:

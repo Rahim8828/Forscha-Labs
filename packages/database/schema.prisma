@@ -1,0 +1,240 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id                 String     @id @default(uuid())
+  email              String     @unique
+  fullName           String?
+  avatarUrl          String?
+  stripeCustomerId   String?
+  subscriptionStatus String     @default("TRIAL") // TRIAL, ACTIVE, PAST_DUE, CANCELED
+  createdAt          DateTime   @default(now())
+  updatedAt          DateTime   @updatedAt
+  businesses         Business[]
+}
+
+model Business {
+  id             String          @id @default(uuid())
+  ownerId        String
+  owner          User            @relation(fields: [ownerId], references: [id], onDelete: Cascade)
+  name           String
+  industry       String?
+  logoUrl        String?
+  brandColor     String          @default("#3E6BEC")
+  currency       String          @default("INR")
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+  teamMembers    TeamMember[]
+  gbpConnections GBPConnection[]
+  reviews        Review[]
+  posts          GeneratedPost[]
+  qrStandees     QRStandee[]
+  cards          BusinessCard[]
+  websites       MiniWebsite[]
+  products       Product[]
+  menuItems      MenuItem[]
+  leads          Lead[]
+  invoices       Invoice[]
+  quotations     Quotation[]
+  expenses       Expense[]
+  tickets        SupportTicket[]
+  whiteLabel     WhiteLabel?
+}
+
+model TeamMember {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  fullName   String
+  email      String
+  role       String   @default("MEMBER") // ADMIN, MANAGER, MEMBER
+  createdAt  DateTime @default(now())
+}
+
+model GBPConnection {
+  id             String   @id @default(uuid())
+  businessId     String
+  business       Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  locationId     String   @unique
+  locationName   String
+  accessToken    String
+  rating         Float    @default(0.0)
+  reviewCount    Int      @default(0)
+  mapsRanking    Int?
+  createdAt      DateTime @default(now())
+}
+
+model Review {
+  id           String   @id @default(uuid())
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  reviewerName String
+  reviewerPic  String?
+  rating       Int
+  comment      String?
+  replyContent String?
+  sentiment    String   @default("NEUTRAL") // POSITIVE, NEUTRAL, NEGATIVE
+  createdAt    DateTime @default(now())
+}
+
+model GeneratedPost {
+  id           String   @id @default(uuid())
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  title        String
+  content      String
+  imageUrl     String?
+  status       String   @default("SCHEDULED") // SCHEDULED, POSTED, FAILED
+  scheduledFor DateTime
+  createdAt    DateTime @default(now())
+}
+
+model QRStandee {
+  id          String   @id @default(uuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name        String
+  type        String   @default("DYNAMIC") // DYNAMIC, STATIC
+  qrUrl       String
+  nfcCode     String?
+  designColor String   @default("#000000")
+  createdAt   DateTime @default(now())
+}
+
+model BusinessCard {
+  id           String   @id @default(uuid())
+  businessId   String
+  business     Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  fullName     String
+  designation  String?
+  phone        String?
+  email        String?
+  whatsapp     String?
+  website      String?
+  bio          String?
+  templateName String   @default("default")
+  qrUrl        String?
+  clicks       Int      @default(0)
+  createdAt    DateTime @default(now())
+}
+
+model MiniWebsite {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  subdomain  String   @unique
+  customDom  String?  @unique
+  themeColor String   @default("#3E6BEC")
+  layoutJson String   @default("{}") // Stores component configurations
+  isLive     Boolean  @default(false)
+  createdAt  DateTime @default(now())
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name        String
+  description String?
+  price       Float
+  stock       Int      @default(0)
+  imageUrl    String?
+  category    String?
+  variants    String   @default("[]") // JSON string of options
+  createdAt   DateTime @default(now())
+}
+
+model MenuItem {
+  id          String   @id @default(uuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name        String
+  price       Float
+  imageUrl    String?
+  category    String?
+  available   Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
+
+model Lead {
+  id          String   @id @default(uuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  name        String
+  email       String?
+  phone       String?
+  status      String   @default("NEW") // NEW, CONTACTED, QUALIFIED, WON, LOST
+  value       Float    @default(0.0)
+  source      String   @default("DIRECT") // DIRECT, GBP, WEBSITE, ADS, WHATSAPP
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Invoice {
+  id            String   @id @default(uuid())
+  businessId    String
+  business      Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  invoiceNumber String
+  clientName    String
+  clientEmail   String?
+  subtotal      Float
+  gstAmount     Float    @default(0.0)
+  total         Float
+  status        String   @default("PENDING") // PAID, PENDING, OVERDUE
+  paymentUrl    String?
+  createdAt     DateTime @default(now())
+}
+
+model Quotation {
+  id              String   @id @default(uuid())
+  businessId      String
+  business        Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  quotationNumber String
+  clientName      String
+  clientEmail     String?
+  total           Float
+  terms           String?
+  status          String   @default("DRAFT") // DRAFT, SENT, APPROVED, REJECTED
+  digitalSig      String?  // base64 signature representation
+  createdAt       DateTime @default(now())
+}
+
+model Expense {
+  id          String   @id @default(uuid())
+  businessId  String
+  business    Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  description String
+  category    String
+  amount      Float
+  vendorName  String?
+  receiptUrl  String?
+  createdAt   DateTime @default(now())
+}
+
+model SupportTicket {
+  id         String   @id @default(uuid())
+  businessId String
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  subject    String
+  body       String
+  status     String   @default("OPEN") // OPEN, IN_PROGRESS, RESOLVED, CLOSED
+  createdAt  DateTime @default(now())
+}
+
+model WhiteLabel {
+  id         String   @id @default(uuid())
+  businessId String   @unique
+  business   Business @relation(fields: [businessId], references: [id], onDelete: Cascade)
+  agencyName String
+  domain     String   @unique
+  logoUrl    String?
+  primaryCol String   @default("#000000")
+  active     Boolean  @default(false)
+}

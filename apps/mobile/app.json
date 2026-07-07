@@ -1,0 +1,13 @@
+{
+  "expo": {
+    "name": "Forscha Mobile",
+    "slug": "forscha-mobile",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "dark",
+    "scheme": "forschamobile",
+    "plugins": [
+      "expo-router"
+    ]
+  }
+}

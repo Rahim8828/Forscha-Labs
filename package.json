@@ -1,0 +1,25 @@
+{
+  "name": "forscha-labs-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/api",
+    "packages/database"
+  ],
+  "scripts": {
+    "dev": "npm run dev --workspace=apps/api",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "dev:mobile": "npm run start --prefix apps/mobile",
+    "build:api": "npm run build --workspace=apps/api",
+    "db:generate": "npm run generate --workspace=packages/database",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "react": "19.0.0",
+    "react-dom": "19.0.0"
+  }
+}
