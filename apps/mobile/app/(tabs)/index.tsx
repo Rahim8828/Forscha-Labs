@@ -9,6 +9,7 @@ import {
   Bell, User, ChevronRight, LogOut, FileText,
   HelpCircle, Shield, X,
 } from 'lucide-react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 const FEATURES = [
   {
@@ -70,6 +71,7 @@ const FEATURES = [
 export default function HomeScreen() {
   const router = useRouter();
   const [profileOpen, setProfileOpen] = useState(false);
+  const insets = useSafeAreaInsets();
 
   const profileMenu = [
     {
@@ -118,51 +120,52 @@ export default function HomeScreen() {
 
   return (
     <View style={s.root}>
+      {/* Spacer for notch */}
+      <View style={{ height: Math.max(insets.top, 12) }} />
+
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={s.scroll}>
 
-        {/* ── TOP BAR ── */}
+        {/* ── TOP BAR (UNIFIED HEADER) ── */}
         <View style={s.topBar}>
           {/* Profile Avatar (left) */}
           <TouchableOpacity style={s.avatar} onPress={() => setProfileOpen(true)} activeOpacity={0.7}>
-            <Text style={s.avatarText}>R</Text>
+            <Text style={s.avatarText}>RS</Text>
             <View style={s.avatarOnline} />
           </TouchableOpacity>
 
           {/* Center brand */}
           <View style={s.topCenter}>
-            <Text style={s.brandName}>Forscha</Text>
+            <Text style={s.brandName}>FORSCHA</Text>
+            <View style={s.brandBadge}>
+              <Text style={s.brandBadgeText}>OS</Text>
+            </View>
           </View>
 
           {/* Notification bell (right) */}
           <TouchableOpacity style={s.bellBtn} activeOpacity={0.7}>
-            <Bell size={20} color="#A1A1AA" />
+            <Bell size={18} color="#D4D4D8" />
             <View style={s.bellBadge} />
           </TouchableOpacity>
         </View>
 
-        {/* ── GREETING ── */}
-        <View style={s.greetRow}>
-          <Text style={s.greetSub}>Good morning</Text>
-          <Text style={s.greetName}>Rahul Sharma 👋</Text>
-          <Text style={s.greetBiz}>Forscha Glass Works · Mumbai</Text>
-        </View>
-
-        {/* ── METRIC STRIP ── */}
-        <View style={s.metricStrip}>
-          <View style={s.metric}>
-            <Text style={s.metricVal}>4.8</Text>
-            <Text style={s.metricStar}>★</Text>
-            <Text style={s.metricLbl}>GMB Rating</Text>
+        {/* ── GREETING CARD ── */}
+        <View style={s.welcomeCard}>
+          <View style={s.welcomeHeader}>
+            <View>
+              <Text style={s.greetSub}>WELCOME BACK</Text>
+              <Text style={s.greetName}>Rahul Sharma 👋</Text>
+            </View>
+            <View style={s.statusBadge}>
+              <View style={s.statusDot} />
+              <Text style={s.statusText}>Active</Text>
+            </View>
           </View>
-          <View style={s.metricDivide} />
-          <View style={s.metric}>
-            <Text style={s.metricVal}>128</Text>
-            <Text style={s.metricLbl}>Reviews</Text>
-          </View>
-          <View style={s.metricDivide} />
-          <View style={s.metric}>
-            <Text style={s.metricVal}>₹2.4L</Text>
-            <Text style={s.metricLbl}>This Month</Text>
+          
+          <View style={s.welcomeDivider} />
+          
+          <View style={s.bizRow}>
+            <Text style={s.greetBiz}>Forscha Glass Works</Text>
+            <Text style={s.bizLocation}>📍 Mumbai, IN</Text>
           </View>
         </View>
 
@@ -181,21 +184,23 @@ export default function HomeScreen() {
             return (
               <TouchableOpacity
                 key={f.id}
-                style={[s.featureCard, { backgroundColor: f.bg, borderColor: f.color + '28' }]}
+                style={[s.featureCard, { borderColor: f.color + '25' }]}
                 onPress={() => router.push(f.route as any)}
                 activeOpacity={0.72}
               >
-                {/* Icon circle */}
-                <View style={[s.iconWrap, { backgroundColor: f.color + '18', borderColor: f.color + '35' }]}>
-                  <Icon size={22} color={f.color} />
+                {/* Arrow indicator */}
+                <View style={s.arrowContainer}>
+                  <ChevronRight size={14} color="#52525B" />
                 </View>
 
-                <Text style={s.featureLabel}>{f.label}</Text>
-                <Text style={s.featureDesc}>{f.desc}</Text>
+                {/* Icon circle */}
+                <View style={[s.iconWrap, { backgroundColor: f.color + '12', borderColor: f.color + '30' }]}>
+                  <Icon size={20} color={f.color} />
+                </View>
 
-                {/* Tap arrow */}
-                <View style={[s.tapArrow, { backgroundColor: f.color + '20' }]}>
-                  <ChevronRight size={12} color={f.color} />
+                <View style={{ gap: 4 }}>
+                  <Text style={s.featureLabel}>{f.label}</Text>
+                  <Text style={s.featureDesc}>{f.desc}</Text>
                 </View>
               </TouchableOpacity>
             );
@@ -203,18 +208,24 @@ export default function HomeScreen() {
         </View>
 
         {/* ── QUICK ACTIONS ── */}
-        <Text style={s.quickLabel}>Quick Actions</Text>
+        <Text style={s.quickLabel}>QUICK ACTIONS</Text>
         <View style={s.quickRow}>
-          <TouchableOpacity style={s.quickBtn} onPress={() => router.push('/billing')}>
-            <Receipt size={16} color="#F97316" />
+          <TouchableOpacity style={s.quickBtn} onPress={() => router.push('/billing')} activeOpacity={0.7}>
+            <View style={[s.quickIconWrap, { backgroundColor: '#F9731615' }]}>
+              <Receipt size={16} color="#F97316" />
+            </View>
             <Text style={s.quickBtnText}>New Invoice</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.quickBtn} onPress={() => router.push('/google-review')}>
-            <Star size={16} color="#F59E0B" />
+          <TouchableOpacity style={s.quickBtn} onPress={() => router.push('/google-review')} activeOpacity={0.7}>
+            <View style={[s.quickIconWrap, { backgroundColor: '#F59E0B15' }]}>
+              <Star size={16} color="#F59E0B" />
+            </View>
             <Text style={s.quickBtnText}>Get Review</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={s.quickBtn} onPress={() => router.push('/whatsapp')}>
-            <MessageCircle size={16} color="#25D366" />
+          <TouchableOpacity style={s.quickBtn} onPress={() => router.push('/whatsapp')} activeOpacity={0.7}>
+            <View style={[s.quickIconWrap, { backgroundColor: '#25D36615' }]}>
+              <MessageCircle size={16} color="#25D366" />
+            </View>
             <Text style={s.quickBtnText}>Broadcast</Text>
           </TouchableOpacity>
         </View>
@@ -300,43 +311,60 @@ const s = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#070709' },
   scroll: { paddingHorizontal: 18 },
 
-  /* ── TOP BAR ── */
+  /* ── TOP BAR (UNIFIED HEADER) ── */
   topBar: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingTop: 20,
-    marginBottom: 22,
+    paddingVertical: 12,
+    marginBottom: 20,
+    borderBottomWidth: 1,
+    borderColor: '#141417',
   },
   avatar: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#1D2D50',
-    borderWidth: 2,
-    borderColor: '#3E6BEC',
+    backgroundColor: '#16233B',
+    borderWidth: 1.5,
+    borderColor: '#3E6BEC80',
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
   },
-  avatarText: { fontSize: 16, fontWeight: '800', color: '#FFFFFF' },
+  avatarText: { fontSize: 14, fontWeight: '800', color: '#FFFFFF', letterSpacing: 0.5 },
   avatarOnline: {
     position: 'absolute',
-    bottom: 0,
-    right: 0,
+    bottom: -1,
+    right: -1,
     width: 10,
     height: 10,
     borderRadius: 5,
-    backgroundColor: '#25D366',
-    borderWidth: 1.5,
+    backgroundColor: '#10B981',
+    borderWidth: 2,
     borderColor: '#070709',
   },
-  topCenter: { flex: 1, alignItems: 'center' },
-  brandName: { fontSize: 16, fontWeight: '800', color: '#FFFFFF', letterSpacing: 0.5 },
+  topCenter: { 
+    flex: 1, 
+    flexDirection: 'row',
+    alignItems: 'center', 
+    justifyContent: 'center',
+    gap: 6,
+  },
+  brandName: { fontSize: 15, fontWeight: '900', color: '#FFFFFF', letterSpacing: 1.5 },
+  brandBadge: {
+    backgroundColor: '#27272A',
+    paddingHorizontal: 5,
+    paddingVertical: 1.5,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderColor: '#3F3F46',
+  },
+  brandBadgeText: { fontSize: 8, fontWeight: '800', color: '#A1A1AA' },
   bellBtn: {
     width: 40,
     height: 40,
     borderRadius: 20,
-    backgroundColor: '#111113',
+    backgroundColor: '#0F0F12',
     borderWidth: 1,
     borderColor: '#202025',
     alignItems: 'center',
@@ -345,51 +373,67 @@ const s = StyleSheet.create({
   },
   bellBadge: {
     position: 'absolute',
-    top: 9,
-    right: 9,
+    top: 10,
+    right: 11,
     width: 7,
     height: 7,
-    borderRadius: 4,
+    borderRadius: 3.5,
     backgroundColor: '#EF4444',
-    borderWidth: 1,
-    borderColor: '#070709',
+    shadowColor: '#EF4444',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 3,
   },
 
-  /* ── GREETING ── */
-  greetRow: { marginBottom: 22 },
-  greetSub: { fontSize: 12, color: '#52525B', fontWeight: '500', marginBottom: 2 },
-  greetName: { fontSize: 24, fontWeight: '800', color: '#FFFFFF', letterSpacing: -0.3 },
-  greetBiz: { fontSize: 13, color: '#52525B', marginTop: 4 },
-
-  /* ── METRIC STRIP ── */
-  metricStrip: {
-    flexDirection: 'row',
+  /* ── GREETING CARD ── */
+  welcomeCard: {
     backgroundColor: '#0F0F12',
-    borderWidth: 1,
     borderColor: '#202025',
-    borderRadius: 18,
-    paddingVertical: 16,
+    borderWidth: 1,
+    borderRadius: 20,
+    padding: 18,
+    marginBottom: 24,
+  },
+  welcomeHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'flex-start',
+  },
+  greetSub: { fontSize: 10, color: '#71717A', fontWeight: '800', letterSpacing: 1, marginBottom: 4 },
+  greetName: { fontSize: 22, fontWeight: '800', color: '#FFFFFF', letterSpacing: -0.3 },
+  statusBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 5,
+    backgroundColor: '#064E3B20',
+    borderColor: '#064E3B80',
+    borderWidth: 1,
+    borderRadius: 12,
     paddingHorizontal: 8,
-    marginBottom: 28,
+    paddingVertical: 3,
+  },
+  statusDot: { width: 6, height: 6, borderRadius: 3, backgroundColor: '#10B981' },
+  statusText: { fontSize: 10, fontWeight: '800', color: '#10B981' },
+  welcomeDivider: { height: 1, backgroundColor: '#202025', marginVertical: 14 },
+  bizRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
   },
-  metric: { flex: 1, alignItems: 'center', flexDirection: 'column', gap: 2 },
-  metricVal: { fontSize: 20, fontWeight: '800', color: '#FFFFFF' },
-  metricStar: { fontSize: 14, color: '#F59E0B', position: 'absolute', top: 0, right: 16 },
-  metricLbl: { fontSize: 11, color: '#52525B', fontWeight: '500' },
-  metricDivide: { width: 1, height: 32, backgroundColor: '#202025' },
+  greetBiz: { fontSize: 13, color: '#A1A1AA', fontWeight: '600' },
+  bizLocation: { fontSize: 11, color: '#71717A', fontWeight: '500' },
 
   /* ── SECTION HEADER ── */
   sectionRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 14,
+    marginBottom: 16,
   },
-  sectionTitle: { fontSize: 17, fontWeight: '700', color: '#E4E4E7' },
+  sectionTitle: { fontSize: 16, fontWeight: '800', color: '#FFFFFF', letterSpacing: 0.3 },
   planBadge: {
-    backgroundColor: '#F9731615',
-    borderColor: '#F9731640',
+    backgroundColor: '#F9731612',
+    borderColor: '#F9731630',
     borderWidth: 1,
     borderRadius: 20,
     paddingHorizontal: 10,
@@ -401,53 +445,65 @@ const s = StyleSheet.create({
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 11,
+    justifyContent: 'space-between',
+    rowGap: 12,
     marginBottom: 28,
   },
   featureCard: {
-    width: '47.5%',
-    borderRadius: 18,
-    padding: 15,
+    width: '48.5%',
+    backgroundColor: '#0F0F12',
+    borderColor: '#202025',
     borderWidth: 1,
-    gap: 6,
+    borderRadius: 20,
+    padding: 16,
+    position: 'relative',
+    minHeight: 136,
+    justifyContent: 'space-between',
+  },
+  arrowContainer: {
+    position: 'absolute',
+    top: 14,
+    right: 14,
+    width: 22,
+    height: 22,
+    borderRadius: 11,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   iconWrap: {
-    width: 42,
-    height: 42,
+    width: 40,
+    height: 40,
     borderRadius: 12,
     borderWidth: 1,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 4,
   },
-  featureLabel: { fontSize: 14, fontWeight: '700', color: '#F4F4F5', lineHeight: 18 },
+  featureLabel: { fontSize: 14, fontWeight: '800', color: '#FFFFFF' },
   featureDesc: { fontSize: 11, color: '#71717A', lineHeight: 15 },
-  tapArrow: {
-    width: 24,
-    height: 24,
-    borderRadius: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-    alignSelf: 'flex-start',
-    marginTop: 4,
-  },
 
   /* ── QUICK ACTIONS ── */
-  quickLabel: { fontSize: 13, fontWeight: '700', color: '#52525B', marginBottom: 10, letterSpacing: 0.5 },
+  quickLabel: { fontSize: 11, fontWeight: '800', color: '#71717A', marginBottom: 12, letterSpacing: 1 },
   quickRow: { flexDirection: 'row', gap: 8 },
   quickBtn: {
     flex: 1,
-    flexDirection: 'row',
+    flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    gap: 6,
-    backgroundColor: '#111113',
+    backgroundColor: '#0F0F12',
     borderColor: '#202025',
     borderWidth: 1,
-    borderRadius: 14,
-    paddingVertical: 12,
+    borderRadius: 16,
+    paddingVertical: 14,
+    gap: 8,
   },
-  quickBtnText: { fontSize: 12, fontWeight: '700', color: '#D4D4D8' },
+  quickIconWrap: {
+    width: 32,
+    height: 32,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  quickBtnText: { fontSize: 12, fontWeight: '700', color: '#E4E4E7' },
 
   /* ── PROFILE BOTTOM SHEET ── */
   modalOverlay: {

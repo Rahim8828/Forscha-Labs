@@ -32,6 +32,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="index"
         options={{
+          headerShown: false,
           title: 'Forscha',
           tabBarLabel: 'Home',
           tabBarIcon: ({ color, size }) => <Home color={color} size={size - 2} />,
@@ -64,6 +65,7 @@ export default function TabsLayout() {
       <Tabs.Screen
         name="catalogue"
         options={{
+          href: null,
           title: 'Products Menu',
           tabBarLabel: 'Catalogue',
           tabBarIcon: ({ color, size }) => <ShoppingBag color={color} size={size - 2} />,
