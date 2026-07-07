@@ -2,9 +2,11 @@ import React, { useState } from 'react';
 import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity, Alert,
 } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { 
   Share2, Instagram, Facebook, Linkedin, Youtube, Twitter, Search, 
-  CheckCircle, Plus, Link, Users, BarChart2, Calendar 
+  CheckCircle, Plus, Link, Users, BarChart2, Calendar, ChevronLeft
 } from 'lucide-react-native';
 
 interface SocialPlatform {
@@ -19,6 +21,8 @@ interface SocialPlatform {
 }
 
 export default function SocialMediaScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [platforms, setPlatforms] = useState<SocialPlatform[]>([
     {
       id: 'instagram',
@@ -136,7 +140,20 @@ export default function SocialMediaScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={{ flex: 1, backgroundColor: '#070709' }}>
+      {/* Spacer for notch */}
+      <View style={{ height: Math.max(insets.top, 12) }} />
+
+      {/* Premium Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+          <ChevronLeft size={20} color="#FFFFFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Social Planner</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
       {/* Connection Status */}
       <View style={styles.statusBar}>
@@ -295,10 +312,37 @@ export default function SocialMediaScreen() {
 
       <View style={{ height: 40 }} />
     </ScrollView>
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderColor: '#202025',
+    backgroundColor: '#070709',
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#0F0F12',
+    borderWidth: 1,
+    borderColor: '#202025',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
+  },
   container: { flex: 1, backgroundColor: '#070709', padding: 16 },
   statusBar: {
     backgroundColor: '#0F0F12', borderColor: '#202025', borderWidth: 1,

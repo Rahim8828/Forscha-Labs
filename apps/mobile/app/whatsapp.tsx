@@ -3,7 +3,9 @@ import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity,
   TextInput, Alert, Switch,
 } from 'react-native';
-import { MessageCircle, Zap, Users, Bell, Plus, Trash2, Play, Pause, Star, ShoppingBag, Calendar, DollarSign, Gift } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { MessageCircle, Zap, Users, Bell, Plus, Trash2, Play, Pause, Star, ShoppingBag, Calendar, DollarSign, Gift, ChevronLeft } from 'lucide-react-native';
 
 type Tab = 'templates' | 'campaigns' | 'triggers';
 
@@ -24,6 +26,8 @@ interface Campaign {
 }
 
 export default function WhatsAppScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<Tab>('templates');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [isLinked, setIsLinked] = useState(false);
@@ -75,7 +79,20 @@ export default function WhatsAppScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={{ flex: 1, backgroundColor: '#070709' }}>
+      {/* Spacer for notch */}
+      <View style={{ height: Math.max(insets.top, 12) }} />
+
+      {/* Premium Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+          <ChevronLeft size={20} color="#FFFFFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>WhatsApp Automation</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
       {/* WhatsApp Link Banner */}
       {!isLinked ? (
@@ -242,10 +259,37 @@ export default function WhatsAppScreen() {
 
       <View style={{ height: 40 }} />
     </ScrollView>
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderColor: '#202025',
+    backgroundColor: '#070709',
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#0F0F12',
+    borderWidth: 1,
+    borderColor: '#202025',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
+  },
   container: { flex: 1, backgroundColor: '#070709', padding: 16 },
   linkBanner: {
     flexDirection: 'row', alignItems: 'center', backgroundColor: '#10B98110',

@@ -3,7 +3,9 @@ import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity,
   TextInput, Alert, Linking,
 } from 'react-native';
-import { Star, Link, Copy, ExternalLink, RefreshCw, CheckCircle, Download } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Star, Link, Copy, ExternalLink, RefreshCw, CheckCircle, Download, ChevronLeft } from 'lucide-react-native';
 
 type Tab = 'connect' | 'scanner' | 'analytics';
 
@@ -15,6 +17,8 @@ const PRE_WRITTEN_REVIEWS = [
 ];
 
 export default function GoogleReviewScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<Tab>('connect');
   const [gmbUrl, setGmbUrl] = useState('https://g.page/r/YOUR_REVIEW_LINK');
   const [isConnected, setIsConnected] = useState(false);
@@ -55,7 +59,20 @@ export default function GoogleReviewScreen() {
   ];
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={{ flex: 1, backgroundColor: '#070709' }}>
+      {/* Spacer for notch */}
+      <View style={{ height: Math.max(insets.top, 12) }} />
+
+      {/* Premium Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+          <ChevronLeft size={20} color="#FFFFFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Google Reviews</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
       {/* Tab Bar */}
       <View style={styles.tabBar}>
@@ -270,10 +287,37 @@ export default function GoogleReviewScreen() {
 
       <View style={{ height: 40 }} />
     </ScrollView>
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderColor: '#202025',
+    backgroundColor: '#070709',
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#0F0F12',
+    borderWidth: 1,
+    borderColor: '#202025',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
+  },
   container: { flex: 1, backgroundColor: '#070709', padding: 16 },
   tabBar: {
     flexDirection: 'row', backgroundColor: '#0F0F12', borderColor: '#202025',

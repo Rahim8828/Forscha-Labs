@@ -3,7 +3,9 @@ import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity,
   TextInput, Alert,
 } from 'react-native';
-import { Receipt, Plus, Trash2, Download, Send, Check, PenTool } from 'lucide-react-native';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Receipt, Plus, Trash2, Download, Send, Check, PenTool, ChevronLeft } from 'lucide-react-native';
 
 type Tab = 'create' | 'invoices' | 'clients';
 
@@ -23,6 +25,8 @@ interface Invoice {
 }
 
 export default function BillingScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [activeTab, setActiveTab] = useState<Tab>('create');
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
@@ -84,7 +88,20 @@ export default function BillingScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={{ flex: 1, backgroundColor: '#070709' }}>
+      {/* Spacer for notch */}
+      <View style={{ height: Math.max(insets.top, 12) }} />
+
+      {/* Premium Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+          <ChevronLeft size={20} color="#FFFFFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Billing & Invoices</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
       {/* Revenue Summary */}
       <View style={styles.summaryBanner}>
@@ -258,10 +275,37 @@ export default function BillingScreen() {
 
       <View style={{ height: 40 }} />
     </ScrollView>
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderColor: '#202025',
+    backgroundColor: '#070709',
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#0F0F12',
+    borderWidth: 1,
+    borderColor: '#202025',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
+  },
   container: { flex: 1, backgroundColor: '#070709', padding: 16 },
   summaryBanner: {
     flexDirection: 'row', backgroundColor: '#0F0F12', borderColor: '#202025',

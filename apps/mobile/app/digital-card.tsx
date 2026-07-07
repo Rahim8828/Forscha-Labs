@@ -3,8 +3,10 @@ import {
   StyleSheet, Text, View, ScrollView, TouchableOpacity,
   TextInput, Alert, ActivityIndicator,
 } from 'react-native';
+import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { 
-  CreditCard, MapPin, Check, Layers, HardDrive, Shield, Info, ArrowRight, Rss 
+  CreditCard, MapPin, Check, Layers, HardDrive, Shield, Info, ArrowRight, Rss, ChevronLeft
 } from 'lucide-react-native';
 
 type Step = 'customise' | 'preview' | 'order';
@@ -25,6 +27,8 @@ const COLOR_OPTIONS = [
 ];
 
 export default function DigitalCardScreen() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [mode, setMode] = useState<ViewMode>('order');
   const [step, setStep] = useState<Step>('customise');
   const [businessName, setBusinessName] = useState('Forscha Glass Works');
@@ -72,7 +76,20 @@ export default function DigitalCardScreen() {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <View style={{ flex: 1, backgroundColor: '#070709' }}>
+      {/* Spacer for notch */}
+      <View style={{ height: Math.max(insets.top, 12) }} />
+
+      {/* Premium Header */}
+      <View style={styles.header}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => router.back()} activeOpacity={0.7}>
+          <ChevronLeft size={20} color="#FFFFFF" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>Digital Review Card</Text>
+        <View style={{ width: 40 }} />
+      </View>
+
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
 
       {/* Segment Switcher */}
       <View style={styles.segmentContainer}>
@@ -329,10 +346,37 @@ export default function DigitalCardScreen() {
 
       <View style={{ height: 40 }} />
     </ScrollView>
+  </View>
   );
 }
 
 const styles = StyleSheet.create({
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: 14,
+    paddingHorizontal: 16,
+    borderBottomWidth: 1,
+    borderColor: '#202025',
+    backgroundColor: '#070709',
+  },
+  backBtn: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    backgroundColor: '#0F0F12',
+    borderWidth: 1,
+    borderColor: '#202025',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: '800',
+    color: '#FFFFFF',
+    letterSpacing: 0.3,
+  },
   container: { flex: 1, backgroundColor: '#070709', padding: 16 },
   segmentContainer: {
     flexDirection: 'row',
