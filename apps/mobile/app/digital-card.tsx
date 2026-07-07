@@ -427,18 +427,25 @@ export default function DigitalCardScreen() {
         {renderHeader('Order Standees & Cards', () => router.back())}
 
         {/* Filters */}
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterRow} contentContainerStyle={{ paddingHorizontal: 14, gap: 6, alignItems: 'center' }}>
-          {FILTERS.map(f => (
-            <TouchableOpacity
-              key={f.id}
-              style={[styles.filterChip, activeFilter === f.id && styles.filterChipActive]}
-              onPress={() => setActiveFilter(f.id)}
-              activeOpacity={0.8}
-            >
-              <Text style={[styles.filterChipText, activeFilter === f.id && styles.filterChipTextActive]}>{f.label}</Text>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
+        <View style={styles.filterContainer}>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.filterScrollContent}
+            bounces={false}
+          >
+            {FILTERS.map(f => (
+              <TouchableOpacity
+                key={f.id}
+                style={[styles.filterChip, activeFilter === f.id && styles.filterChipActive]}
+                onPress={() => setActiveFilter(f.id)}
+                activeOpacity={0.8}
+              >
+                <Text style={[styles.filterChipText, activeFilter === f.id && styles.filterChipTextActive]}>{f.label}</Text>
+              </TouchableOpacity>
+            ))}
+          </ScrollView>
+        </View>
 
         <Text style={styles.countText}>Showing {filteredProducts.length} of {PRODUCTS.length} products</Text>
 
@@ -836,15 +843,34 @@ const styles = StyleSheet.create({
   cartBadgeText: { color: '#FFFFFF', fontSize: 10, fontWeight: '900' },
 
   // Filters
-  filterRow: { paddingVertical: 8, paddingBottom: 4 },
+  filterContainer: {
+    height: 44,
+    justifyContent: 'center',
+    borderBottomWidth: 1,
+    borderColor: '#202025',
+    backgroundColor: '#070709',
+  },
+  filterScrollContent: {
+    paddingHorizontal: 16,
+    gap: 8,
+    alignItems: 'center',
+    flexDirection: 'row',
+    height: 44,
+  },
   filterChip: {
-    paddingHorizontal: 10, paddingVertical: 5, borderRadius: 16,
-    backgroundColor: '#0F0F12', borderWidth: 1, borderColor: '#202025',
+    height: 30,
+    paddingHorizontal: 12,
+    borderRadius: 15,
+    backgroundColor: '#0F0F12',
+    borderWidth: 1,
+    borderColor: '#202025',
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   filterChipActive: { backgroundColor: '#3E6BEC', borderColor: '#3E6BEC' },
-  filterChipText: { fontSize: 11, fontWeight: '600', color: '#71717A' },
+  filterChipText: { fontSize: 11, fontWeight: '600', color: '#71717A', lineHeight: 14 },
   filterChipTextActive: { color: '#FFFFFF' },
-  countText: { fontSize: 11, color: '#52525B', paddingHorizontal: 16, marginBottom: 6, fontWeight: '500' },
+  countText: { fontSize: 11, color: '#52525B', paddingHorizontal: 16, marginBottom: 6, marginTop: 8, fontWeight: '500' },
 
   // Catalog Grid
   catalogGrid: { paddingHorizontal: 12 },
